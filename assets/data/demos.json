@@ -1,0 +1,138 @@
+[
+    {
+      "id": "00",
+      "title": "AI Learning Status Dashboard",
+      "status": "Planned",
+      "level": "Beginner",
+      "description": "Track the full journey from ML basics to LLMs, RAG, Tool Calling and Agents.",
+      "path": "00-ai-learning-status/index.html"
+    },
+    {
+      "id": "01",
+      "title": "Machine Learning Basic Idea",
+      "status": "Done / To convert",
+      "level": "Beginner",
+      "description": "Understand ML as learning patterns from data instead of writing fixed rules.",
+      "path": "01-ml-basic-idea/index.html"
+    },
+    {
+      "id": "02",
+      "title": "Linear Regression",
+      "status": "Done / To convert",
+      "level": "Beginner",
+      "description": "Learn how one or more input features are used to predict a numeric output using a line or plane.",
+      "path": "02-linear-regression/index.html"
+    },
+    {
+      "id": "03",
+      "title": "Logistic Regression",
+      "status": "Done / To convert",
+      "level": "Beginner",
+      "description": "Learn probability-based classification using sigmoid, decision boundary and class prediction.",
+      "path": "03-logistic-regression/index.html"
+    },
+    {
+      "id": "04",
+      "title": "Neural Network Basic",
+      "status": "Done / To convert",
+      "level": "Beginner",
+      "description": "Understand inputs, weights, hidden layers, activation and output using a visual neural network demo.",
+      "path": "04-neural-network-basic/index.html"
+    },
+    {
+      "id": "05",
+      "title": "ML to LLM Bridge",
+      "status": "Done / To convert",
+      "level": "Beginner",
+      "description": "Connect your ML and neural network understanding to how LLMs process language.",
+      "path": "05-ml-to-llm-bridge/index.html"
+    },
+    {
+      "id": "06",
+      "title": "Text as Data",
+      "status": "Done",
+      "level": "Beginner",
+      "description": "Understand how human text becomes machine-readable data using preparation, vocabulary, IDs, sequences and simple vectors.",
+      "path": "06-text-as-data/index.html"
+    },
+    {
+      "id": "07",
+      "title": "Tokens and Tokenization",
+      "status": "Next",
+      "level": "Beginner",
+      "description": "Learn how text is split into tokens before going into an LLM.",
+      "path": "07-tokens-tokenization/index.html"
+    },
+    {
+      "id": "08",
+      "title": "Embeddings",
+      "status": "Pending",
+      "level": "Beginner",
+      "description": "Learn how token IDs become vectors that capture meaning-like relationships.",
+      "path": "08-embeddings/index.html"
+    },
+    {
+      "id": "09",
+      "title": "Sequence Learning",
+      "status": "Pending",
+      "level": "Beginner",
+      "description": "Understand why word order matters and how text behaves like sequence data.",
+      "path": "09-sequence-learning/index.html"
+    },
+    {
+      "id": "10",
+      "title": "Attention",
+      "status": "Pending",
+      "level": "Intermediate",
+      "description": "Learn how models decide which words or tokens should focus on each other.",
+      "path": "10-attention/index.html"
+    },
+    {
+      "id": "11",
+      "title": "Transformer",
+      "status": "Pending",
+      "level": "Intermediate",
+      "description": "Understand the architecture behind modern LLMs.",
+      "path": "11-transformer/index.html"
+    },
+    {
+      "id": "12",
+      "title": "Pretraining and Next Token Prediction",
+      "status": "Pending",
+      "level": "Intermediate",
+      "description": "Learn how LLMs are trained to predict the next token from large text data.",
+      "path": "12-pretraining-next-token/index.html"
+    },
+    {
+      "id": "13",
+      "title": "Prompting",
+      "status": "Pending",
+      "level": "Beginner",
+      "description": "Understand how instructions, examples, context and format guide LLM behavior.",
+      "path": "13-prompting/index.html"
+    },
+    {
+      "id": "14",
+      "title": "RAG",
+      "status": "Pending",
+      "level": "Intermediate",
+      "description": "Learn how retrieval augmented generation connects external knowledge to LLMs.",
+      "path": "14-rag/index.html"
+    },
+    {
+      "id": "15",
+      "title": "Tool Calling",
+      "status": "Pending",
+      "level": "Intermediate",
+      "description": "Understand how LLMs use external tools, APIs and functions.",
+      "path": "15-tool-calling/index.html"
+    },
+    {
+      "id": "16",
+      "title": "Agents",
+      "status": "Pending",
+      "level": "Intermediate",
+      "description": "Learn how LLMs can plan, use tools, remember steps and act toward goals.",
+      "path": "16-agents/index.html"
+    }
+  ]
