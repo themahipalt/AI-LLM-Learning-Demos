@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07 - Tokens and Tokenization</title>
+
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --green: #16a34a;
+      --orange: #f97316;
+      --purple: #7c3aed;
+      --border: #e5e7eb;
+      --soft-blue: #dbeafe;
+      --soft-green: #dcfce7;
+      --soft-orange: #ffedd5;
+      --soft-purple: #ede9fe;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 850px;
+      color: #dbeafe;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 24px auto;
+      padding: 0 18px 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 11px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    .small-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    select,
+    input[type="number"] {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 14px;
+    }
+
+    .token-box {
+      display: inline-block;
+      padding: 8px 11px;
+      margin: 5px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+      border: 1px solid transparent;
+    }
+
+    .word-token {
+      background: var(--soft-blue);
+      color: #1e40af;
+      border-color: #bfdbfe;
+    }
+
+    .sub-token {
+      background: var(--soft-green);
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .char-token {
+      background: var(--soft-orange);
+      color: #9a3412;
+      border-color: #fed7aa;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stat {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #374151;
+    }
+
+    .meter {
+      width: 100%;
+      height: 18px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--orange));
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .flow-step {
+      background: var(--soft-purple);
+      border: 1px solid #ddd6fe;
+      color: #4c1d95;
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      font-weight: bold;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 14px;
+      border-radius: 14px;
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+
+    .mini {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .footer-nav {
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-nav a {
+      text-decoration: none;
+      background: #0f172a;
+      color: white;
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .grid,
+      .flow,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>07 — Tokens and Tokenization</h1>
+    <p>
+      Learn how human text becomes tokens, token IDs, context usage, and estimated cost before it enters an LLM.
+    </p>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <h2>1. Enter Text</h2>
+        <p class="mini">
+          Type any sentence below. This demo will show simple word tokens, subword-like tokens, token IDs, context usage, and estimated cost.
+        </p>
+
+        <textarea id="inputText">I am learning tokenization because LLMs read tokens, not full words.</textarea>
+
+        <div class="controls">
+          <button onclick="runTokenizer()">Tokenize Text</button>
+          <button onclick="loadExample()">Load Example</button>
+
+          <label class="small-label">
+            Context Window:
+            <select id="contextWindow" onchange="runTokenizer()">
+              <option value="128">128 tokens</option>
+              <option value="512">512 tokens</option>
+              <option value="1024" selected>1024 tokens</option>
+              <option value="4096">4096 tokens</option>
+              <option value="8192">8192 tokens</option>
+            </select>
+          </label>
+
+          <label class="small-label">
+            Expected Output Tokens:
+            <input id="outputTokens" type="number" value="150" min="1" onchange="runTokenizer()" />
+          </label>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <strong id="wordCount">0</strong>
+            <span>Words</span>
+          </div>
+          <div class="stat">
+            <strong id="tokenCount">0</strong>
+            <span>Estimated Tokens</span>
+          </div>
+          <div class="stat">
+            <strong id="charCount">0</strong>
+            <span>Characters</span>
+          </div>
+          <div class="stat">
+            <strong id="totalTokens">0</strong>
+            <span>Input + Output</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2. Big Idea</h2>
+
+        <div class="flow">
+          <div class="flow-step">Text</div>
+          <div class="flow-step">Tokens</div>
+          <div class="flow-step">Token IDs</div>
+          <div class="flow-step">Embeddings</div>
+          <div class="flow-step">LLM</div>
+        </div>
+
+        <div class="note">
+          <strong>Key Point:</strong><br />
+          LLMs do not directly read words like humans. They read token IDs, convert them into embeddings, and then predict the next token.
+        </div>
+
+        <div class="section">
+          <h3>Context Window Usage</h3>
+          <p class="mini">
+            Context window means how many tokens the model can process in one request.
+          </p>
+          <div class="meter">
+            <div class="meter-fill" id="contextFill"></div>
+          </div>
+          <p id="contextText" class="mini"></p>
+        </div>
+
+        <div class="section">
+          <h3>Estimated Cost Concept</h3>
+          <p class="mini">
+            Demo assumption only: input token = ₹0.0001, output token = ₹0.0003.
+          </p>
+          <table>
+            <tr>
+              <td>Input Cost</td>
+              <td id="inputCost">₹0.0000</td>
+            </tr>
+            <tr>
+              <td>Output Cost</td>
+              <td id="outputCost">₹0.0000</td>
+            </tr>
+            <tr>
+              <td><strong>Total Estimated Cost</strong></td>
+              <td id="totalCost"><strong>₹0.0000</strong></td>
+            </tr>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="card section">
+      <h2>3. Word Tokenization</h2>
+      <p class="mini">
+        Word tokenization breaks text by spaces and punctuation. This is simple, but real LLM tokenizers are more advanced.
+      </p>
+      <div id="wordTokens"></div>
+    </section>
+
+    <section class="card section">
+      <h2>4. Subword-like Tokenization</h2>
+      <p class="mini">
+        Modern LLMs mostly use subword tokenization. Common words may stay whole, but larger or complex words may be broken into smaller pieces.
+      </p>
+      <div id="subwordTokens"></div>
+    </section>
+
+    <section class="card section">
+      <h2>5. Token ID Table</h2>
+      <p class="mini">
+        Each token gets a numeric ID. These IDs are lookup numbers, not mathematical meaning.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Token</th>
+            <th>Demo Token ID</th>
+            <th>Explanation</th>
+          </tr>
+        </thead>
+        <tbody id="tokenTable"></tbody>
+      </table>
+    </section>
+
+    <section class="card section">
+      <h2>6. Teaching Summary</h2>
+      <p>
+        Tokenization is the first step in the LLM pipeline. It converts human text into small pieces called tokens.
+        These tokens are mapped to token IDs. Token IDs are then converted into embeddings, which are processed by the neural network.
+      </p>
+
+      <div class="note">
+        <strong>Remember:</strong><br />
+        Tokens decide how much the model can read, how much it can write, how fast it responds, and how much the API may cost.
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a href="../06-text-as-data/index.html">← Previous: Text as Data</a>
+      <a href="../../index.html">Back to Main Demos</a>
+      <a href="../08-embeddings/index.html">Next: Embeddings →</a>
+    </div>
+  </main>
+
+  <script>
+    const examples = [
+      "I am learning tokenization because LLMs read tokens, not full words.",
+      "ChatGPT converts text into tokens, token IDs, embeddings, and then predicts the next token.",
+      "Unbelievable learning happens when we understand subword tokenization clearly.",
+      "Deepak is building AI LLM learning demos using HTML, CSS, JavaScript, Git, and GitHub Pages."
+    ];
+
+    function cleanWords(text) {
+      return text
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+    }
+
+    function simpleWordTokenizer(text) {
+      return text
+        .match(/[A-Za-z0-9]+|[^\sA-Za-z0-9]/g) || [];
+    }
+
+    function subwordLikeTokenizer(text) {
+      const rawTokens = simpleWordTokenizer(text);
+      const result = [];
+
+      rawTokens.forEach(token => {
+        if (/^[A-Za-z]+$/.test(token) && token.length > 8) {
+          if (token.endsWith("ization")) {
+            result.push(token.slice(0, -7));
+            result.push("ization");
+          } else if (token.endsWith("ing")) {
+            result.push(token.slice(0, -3));
+            result.push("ing");
+          } else if (token.endsWith("able")) {
+            result.push(token.slice(0, -4));
+            result.push("able");
+          } else if (token.endsWith("ness")) {
+            result.push(token.slice(0, -4));
+            result.push("ness");
+          } else {
+            const mid = Math.ceil(token.length / 2);
+            result.push(token.slice(0, mid));
+            result.push(token.slice(mid));
+          }
+        } else {
+          result.push(token);
+        }
+      });
+
+      return result.filter(t => t !== "");
+    }
+
+    function demoTokenId(token) {
+      let hash = 0;
+      for (let i = 0; i < token.length; i++) {
+        hash = ((hash << 5) - hash) + token.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return Math.abs(hash % 50000) + 100;
+    }
+
+    function renderTokens(containerId, tokens, className) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      tokens.forEach(token => {
+        const span = document.createElement("span");
+        span.className = "token-box " + className;
+        span.textContent = token;
+        container.appendChild(span);
+      });
+    }
+
+    function runTokenizer() {
+      const text = document.getElementById("inputText").value;
+      const words = cleanWords(text);
+      const wordTokens = simpleWordTokenizer(text);
+      const subTokens = subwordLikeTokenizer(text);
+
+      const estimatedInputTokens = subTokens.length;
+      const expectedOutputTokens = Number(document.getElementById("outputTokens").value || 0);
+      const totalTokens = estimatedInputTokens + expectedOutputTokens;
+      const contextWindow = Number(document.getElementById("contextWindow").value);
+
+      document.getElementById("wordCount").textContent = words.length;
+      document.getElementById("tokenCount").textContent = estimatedInputTokens;
+      document.getElementById("charCount").textContent = text.length;
+      document.getElementById("totalTokens").textContent = totalTokens;
+
+      renderTokens("wordTokens", wordTokens, "word-token");
+      renderTokens("subwordTokens", subTokens, "sub-token");
+
+      const tbody = document.getElementById("tokenTable");
+      tbody.innerHTML = "";
+
+      subTokens.forEach((token, index) => {
+        const tr = document.createElement("tr");
+
+        const explanation =
+          token.length <= 2
+            ? "Small token"
+            : /^[.,!?;:]$/.test(token)
+              ? "Punctuation token"
+              : token.length > 6
+                ? "Word or subword piece"
+                : "Common token";
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${escapeHtml(token)}</strong></td>
+          <td>${demoTokenId(token)}</td>
+          <td>${explanation}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      const usagePercent = Math.min((totalTokens / contextWindow) * 100, 100);
+      document.getElementById("contextFill").style.width = usagePercent + "%";
+      document.getElementById("contextText").textContent =
+        `${totalTokens} tokens used out of ${contextWindow}. Usage: ${usagePercent.toFixed(2)}%`;
+
+      const inputCost = estimatedInputTokens * 0.0001;
+      const outputCost = expectedOutputTokens * 0.0003;
+      const totalCost = inputCost + outputCost;
+
+      document.getElementById("inputCost").textContent = "₹" + inputCost.toFixed(4);
+      document.getElementById("outputCost").textContent = "₹" + outputCost.toFixed(4);
+      document.getElementById("totalCost").innerHTML = "<strong>₹" + totalCost.toFixed(4) + "</strong>";
+    }
+
+    function loadExample() {
+      const random = examples[Math.floor(Math.random() * examples.length)];
+      document.getElementById("inputText").value = random;
+      runTokenizer();
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    runTokenizer();
+  </script>
+</body>
+</html>
