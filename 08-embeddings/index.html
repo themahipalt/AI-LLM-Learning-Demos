@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>08 — Embeddings | Full Lesson + Tools</title>
+  <style>
+    :root{
+      --bg:#f5f8ff;--bg2:#eef7ff;--card:#ffffff;--ink:#172033;--muted:#5f6f89;
+      --line:#dbe7f5;--blue:#2563eb;--sky:#38bdf8;--green:#10b981;--orange:#f59e0b;
+      --purple:#7c3aed;--shadow:0 14px 35px rgba(15,23,42,.09);--radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);line-height:1.68;
+      background:radial-gradient(circle at top left,rgba(37,99,235,.12),transparent 34%),
+                 radial-gradient(circle at top right,rgba(16,185,129,.13),transparent 32%),
+                 linear-gradient(180deg,var(--bg2),var(--bg));
+    }
+    .shell{max-width:1220px;margin:0 auto;padding:24px 16px 70px}
+    .hero{background:linear-gradient(135deg,#fff,#eef7ff);border:1px solid var(--line);
+      border-radius:30px;box-shadow:var(--shadow);padding:34px 28px;margin-bottom:22px;position:relative;overflow:hidden}
+    .hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-105px;top:-125px;
+      background:radial-gradient(circle,rgba(56,189,248,.28),transparent 68%)}
+    .kicker{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--blue);background:#eaf3ff;
+      border:1px solid #cfe4ff;padding:8px 13px;border-radius:999px;font-size:.92rem}
+    h1{margin:18px 0 10px;font-size:clamp(2rem,4.6vw,4rem);line-height:1.08;letter-spacing:-1px}
+    .hero p{max-width:960px;color:var(--muted);font-size:1.08rem;margin:0}
+    .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+    .badge{background:#fff;border:1px solid var(--line);color:#334155;padding:8px 12px;border-radius:999px;
+      box-shadow:0 6px 16px rgba(15,23,42,.05);font-size:.92rem}
+    .layout{display:grid;grid-template-columns:292px minmax(0,1fr);gap:22px}
+    nav{position:sticky;top:14px;align-self:start;max-height:calc(100vh - 28px);overflow:auto;background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    nav h3{margin:0 0 12px;font-size:1rem;color:var(--blue)}
+    nav a{display:block;text-decoration:none;color:var(--muted);padding:8px 10px;border-radius:11px;font-size:.91rem}
+    nav a:hover{color:var(--blue);background:#edf6ff}
+    main{min-width:0}
+    section{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+    h2{margin:0 0 12px;font-size:1.55rem;letter-spacing:-.3px}
+    h3{margin:22px 0 8px;color:var(--blue);font-size:1.15rem}
+    p{color:var(--muted);margin-top:8px}
+    strong{color:var(--ink)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:#f8fbff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .memory{background:linear-gradient(135deg,#eaf3ff,#ecfdf5);border:1px solid #cfe4ff;border-left:6px solid var(--green);
+      border-radius:16px;padding:15px;color:#123047;font-weight:800;margin-top:14px}
+    .note{background:#fff8e6;border:1px solid #fde7aa;border-left:6px solid var(--orange);border-radius:16px;
+      padding:15px;color:#624200;margin-top:14px}
+    .flow{display:grid;gap:10px;margin-top:14px}
+    .flow-box,pre{background:#0f172a;color:#e2f3ff;border-radius:16px;padding:14px;font-family:Consolas,"Courier New",monospace;
+      overflow-x:auto;white-space:pre-wrap;border:1px solid #1e293b}
+    .arrow{text-align:center;color:var(--green);font-size:1.4rem;line-height:1;font-weight:900}
+    code{background:#eef6ff;color:#0f4da1;padding:2px 6px;border-radius:8px;font-family:Consolas,"Courier New",monospace;border:1px solid #d6eaff}
+    table{width:100%;border-collapse:collapse;margin-top:14px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff}
+    th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top;color:#334155}
+    th{background:#edf6ff;color:#174b8f;font-weight:900}
+    tr:last-child td{border-bottom:none}
+    .tool{border:2px solid #cfe4ff;background:linear-gradient(180deg,#fff,#f8fbff)}
+    .meaning-area{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(260px,.75fr);gap:18px;align-items:start}
+    .plane{position:relative;background:linear-gradient(90deg,rgba(37,99,235,.07) 1px,transparent 1px),
+      linear-gradient(rgba(37,99,235,.07) 1px,transparent 1px),#fbfdff;background-size:36px 36px;border:1px solid var(--line);
+      border-radius:22px;min-height:470px;overflow:hidden}
+    .axis-x,.axis-y{position:absolute;background:#9fb4cd}.axis-x{height:2px;width:100%;bottom:12%;left:0}.axis-y{width:2px;height:100%;left:10%;top:0}
+    .axis-label{position:absolute;color:#64748b;font-size:.83rem;background:rgba(255,255,255,.88);padding:3px 8px;border-radius:999px}
+    .axis-label.x{right:14px;bottom:17px}.axis-label.y{left:14px;top:14px}
+    .dot{position:absolute;transform:translate(-50%,50%);cursor:pointer;border:3px solid #fff;width:18px;height:18px;border-radius:50%;
+      background:var(--blue);box-shadow:0 6px 18px rgba(37,99,235,.32);transition:.2s ease;z-index:2}
+    .dot:hover,.dot.active{width:26px;height:26px;background:var(--green);box-shadow:0 9px 24px rgba(16,185,129,.35)}
+    .dot-label{position:absolute;transform:translate(-50%,-150%);font-size:.9rem;font-weight:800;white-space:nowrap;color:#1e293b;
+      pointer-events:none;z-index:1;background:rgba(255,255,255,.86);padding:1px 5px;border-radius:7px}
+    .info{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 24px rgba(15,23,42,.06)}
+    .big{font-size:1.25rem;color:var(--green);font-weight:900}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+    select,button,textarea{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 12px;border-radius:13px;font-size:1rem;outline:none}
+    select:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0 4px rgba(56,189,248,.16)}
+    button{cursor:pointer;background:linear-gradient(135deg,var(--blue),#0ea5e9);color:#fff;border:0;font-weight:900;box-shadow:0 9px 20px rgba(37,99,235,.22)}
+    button.secondary{background:linear-gradient(135deg,var(--green),#14b8a6);box-shadow:0 9px 20px rgba(16,185,129,.20)}
+    button:hover{transform:translateY(-1px)}
+    .result{margin-top:12px;padding:16px;border-radius:16px;background:#f8fbff;border:1px solid var(--line)}
+    .sent-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    textarea{width:100%;min-height:90px;resize:vertical;color:#1e293b}
+    .rag-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+    .rag-step{background:#f8fbff;border:1px solid var(--line);border-radius:16px;padding:13px;text-align:center;min-height:82px;display:flex;align-items:center;justify-content:center;color:#174b8f;font-weight:900;position:relative}
+    .rag-step:after{content:"→";position:absolute;right:-12px;color:var(--green);font-weight:900}
+    .rag-step:nth-child(4):after,.rag-step:last-child:after{content:""}
+    .summary{background:linear-gradient(135deg,#eff6ff,#ecfdf5)}
+    .small{font-size:.92rem;color:var(--muted)}
+    .top{display:inline-block;margin-top:8px;color:var(--blue);text-decoration:none;font-weight:900}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}nav{position:relative;top:auto;max-height:none}.grid2,.meaning-area,.sent-grid{grid-template-columns:1fr}.rag-flow{grid-template-columns:1fr 1fr}.rag-step:after{content:""}}
+    @media(max-width:620px){.shell{padding:14px 10px 44px}.hero,section{padding:18px;border-radius:20px}.rag-flow{grid-template-columns:1fr}.plane{min-height:410px}th,td{font-size:.92rem}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero" id="top">
+    <div class="kicker">AI • ML • DL • LLM • Agents</div>
+    <h1>08 — Embeddings</h1>
+    <p>
+      Full learning notes exactly as a complete lesson, with embedded demo tools. This page keeps every important concept separate:
+      embedding coordinates, lookup dictionary, similarity, sentence vs word embeddings, RAG, vector databases, and positional embeddings.
+    </p>
+    <div class="badges">
+      <span class="badge">Full Lesson</span><span class="badge">Embedded Tools</span><span class="badge">Meaning Space</span>
+      <span class="badge">Cosine Similarity</span><span class="badge">Sentence Embeddings</span><span class="badge">Vector DB</span><span class="badge">RAG</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav>
+      <h3>08 — Embeddings</h3>
+      <a href="#s1">1. Journey so far</a>
+      <a href="#s2">2. What is embedding?</a>
+      <a href="#s3">3. Token IDs not enough</a>
+      <a href="#s4">4. Mental model</a>
+      <a href="#s5">5. Embedding as coordinates</a>
+      <a href="#tool1">Tool: Meaning space</a>
+      <a href="#s6">6. Embeddings are learned</a>
+      <a href="#s7">7. Token ID → embedding</a>
+      <a href="#s8">8. Lookup as dictionary</a>
+      <a href="#s9">9. What each number means</a>
+      <a href="#s10">10. Similarity between embeddings</a>
+      <a href="#s11">11. Tiny cosine intuition</a>
+      <a href="#tool2">Tool: Distance + cosine</a>
+      <a href="#s12">12. Word vs sentence embedding</a>
+      <a href="#tool3">Tool: Sentence similarity</a>
+      <a href="#s13">13. Why embeddings are powerful</a>
+      <a href="#s14">14. One-hot vs embeddings</a>
+      <a href="#s15">15. Document chunks</a>
+      <a href="#s16">16. Embeddings in RAG</a>
+      <a href="#s17">17. Vector databases</a>
+      <a href="#s18">18. Mini RAG example</a>
+      <a href="#s19">19. Keyword vs embedding</a>
+      <a href="#s20">20. How embeddings learned</a>
+      <a href="#s21">21. Next-token prediction</a>
+      <a href="#s22">22. Positional embeddings</a>
+      <a href="#summary">23. Summary</a>
+    </nav>
+
+    <main>
+      <section id="s1">
+        <h2>1. Where We Are in the LLM Journey</h2>
+        <p>So far the flow is:</p>
+        <div class="flow">
+          <div class="flow-box">Text</div><div class="arrow">↓</div>
+          <div class="flow-box">Tokens</div><div class="arrow">↓</div>
+          <div class="flow-box">Token IDs</div><div class="arrow">↓</div>
+          <div class="flow-box">Embeddings</div><div class="arrow">↓</div>
+          <div class="flow-box">Neural Network / Transformer</div><div class="arrow">↓</div>
+          <div class="flow-box">Prediction / Generation</div>
+        </div>
+        <p>In tokenization, we learned that the model does not directly read words like humans do.</p>
+        <pre>"I love AI"
+
+Tokens:
+["I", "love", "AI"]
+
+Token IDs:
+[40, 3021, 15836]</pre>
+        <p>
+          But token IDs are only numbers for lookup. They do not carry meaning by themselves.
+          So the next question is: how does the model convert token IDs into meaningful mathematical form?
+        </p>
+        <div class="memory">That answer is: Embeddings.</div>
+      </section>
+
+      <section id="s2">
+        <h2>2. What Is an Embedding?</h2>
+        <p>
+          An <strong>embedding</strong> is a vector representation of meaning.
+          It converts a token, word, sentence, paragraph, image, or document into a list of numbers that captures meaning.
+        </p>
+        <pre>"king" → [0.21, -0.45, 0.88, 0.12, ...]</pre>
+        <p>In real LLMs, the vector may have hundreds or thousands of numbers.</p>
+        <pre>king  → [0.21, -0.45, 0.88, 0.12, ...]
+queen → [0.19, -0.41, 0.84, 0.18, ...]
+car   → [-0.72, 0.33, -0.15, 0.49, ...]</pre>
+        <p>The idea is:</p>
+        <pre>king and queen are close in meaning
+king and car are far in meaning</pre>
+        <div class="memory">Embedding = meaning converted into numbers.</div>
+      </section>
+
+      <section id="s3">
+        <h2>3. Why Token IDs Are Not Enough</h2>
+        <p>Suppose we have:</p>
+        <table>
+          <thead><tr><th>Word</th><th>ID</th></tr></thead>
+          <tbody>
+            <tr><td>king</td><td>101</td></tr>
+            <tr><td>queen</td><td>102</td></tr>
+            <tr><td>apple</td><td>103</td></tr>
+            <tr><td>car</td><td>104</td></tr>
+          </tbody>
+        </table>
+        <p>These numbers do not tell the model that:</p>
+        <pre>king is closer to queen
+apple is closer to fruit
+car is closer to vehicle</pre>
+        <p>
+          Token IDs are like database primary keys. They identify the token, but they do not explain meaning.
+          The ID <code>101</code> does not mean royal, male, palace, crown, or kingdom.
+        </p>
+        <div class="note">So we need another representation. That is the embedding.</div>
+      </section>
+
+      <section id="s4">
+        <h2>4. Simple Mental Model</h2>
+        <p>Think of embedding as placing words in a meaning-space.</p>
+        <pre>             queen
+              |
+              |
+king -------- palace -------- crown
+
+
+apple ------- fruit -------- mango
+
+
+car -------- vehicle ------- bus</pre>
+        <p>
+          Words with related meaning are placed near each other. Words with unrelated meaning are placed far away.
+          In actual LLMs, this space is not 2D or 3D. It may be 768, 1536, 3072, 4096 dimensions or more.
+        </p>
+      </section>
+
+      <section id="s5">
+        <h2>5. Embedding as Coordinates</h2>
+        <p>
+          Suppose we create a very simple 2D embedding space.
+          Let dimension 1 be royalty meaning and dimension 2 be food meaning.
+        </p>
+        <table>
+          <thead><tr><th>Word</th><th>Royalty</th><th>Food</th></tr></thead>
+          <tbody>
+            <tr><td>king</td><td>0.95</td><td>0.05</td></tr>
+            <tr><td>queen</td><td>0.92</td><td>0.04</td></tr>
+            <tr><td>prince</td><td>0.88</td><td>0.03</td></tr>
+            <tr><td>apple</td><td>0.02</td><td>0.95</td></tr>
+            <tr><td>mango</td><td>0.01</td><td>0.92</td></tr>
+            <tr><td>banana</td><td>0.01</td><td>0.90</td></tr>
+            <tr><td>car</td><td>0.05</td><td>0.02</td></tr>
+          </tbody>
+        </table>
+        <p>Now we can see:</p>
+        <pre>king ≈ queen ≈ prince
+apple ≈ mango ≈ banana
+car is not close to either group</pre>
+        <div class="memory">This is the core idea: meaning can be represented as coordinates.</div>
+      </section>
+
+      <section id="tool1" class="tool">
+        <h2>Tool 1: Interactive Meaning Space</h2>
+        <p>
+          Click any word dot. You will see its vector and nearest words. This makes the coordinate idea visible.
+        </p>
+        <div class="meaning-area">
+          <div class="plane" id="plane">
+            <div class="axis-x"></div><div class="axis-y"></div>
+            <div class="axis-label x">Dimension X</div><div class="axis-label y">Dimension Y</div>
+          </div>
+          <div class="info">
+            <h3>Selected Word</h3>
+            <p id="selectedWord" class="big">Click any dot</p>
+            <p id="selectedVector">Vector: —</p>
+            <h3>Nearest Words</h3>
+            <ol id="nearestWords"></ol>
+            <p class="small">Teaching-level 2D vectors are used here. Real embeddings are much larger.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="s6">
+        <h2>6. Important Point: Embeddings Are Learned</h2>
+        <p>Embeddings are not manually written by humans.</p>
+        <pre>Nobody sits and writes:
+king  = [0.95, 0.10]
+queen = [0.92, 0.12]
+apple = [0.05, 0.90]</pre>
+        <p>
+          During training, the model learns that words used in similar contexts should have similar vectors.
+        </p>
+        <pre>The king ruled the kingdom.
+The queen ruled the kingdom.
+The prince lived in the palace.</pre>
+        <p>The model sees that king, queen, and prince appear in similar contexts. So their vectors become close.</p>
+        <pre>I ate an apple.
+I ate a mango.
+I ate a banana.</pre>
+        <p>Similarly, apple, mango, and banana become close because they appear in similar contexts.</p>
+        <div class="memory">Words used in similar contexts should have similar vectors.</div>
+      </section>
+
+      <section id="s7">
+        <h2>7. From Token ID to Embedding</h2>
+        <p>Inside the model, there is usually an embedding table.</p>
+        <table>
+          <thead><tr><th>Token</th><th>Token ID</th><th>Embedding Vector</th></tr></thead>
+          <tbody id="embeddingTable"></tbody>
+        </table>
+        <p>When the input is:</p>
+        <pre>king queen apple</pre>
+        <p>Tokenization gives:</p>
+        <pre>[101, 102, 105]</pre>
+        <p>Then embedding lookup gives:</p>
+        <pre>101 → [0.95, 0.10]
+102 → [0.92, 0.12]
+105 → [0.05, 0.90]</pre>
+        <p>So the model no longer works with raw token IDs. It works with vectors.</p>
+      </section>
+
+      <section id="s8">
+        <h2>8. Embedding Lookup Is Like a Dictionary</h2>
+        <p>A simple analogy is a JavaScript dictionary:</p>
+        <pre>embeddingTable = {
+  101: [0.95, 0.10],
+  102: [0.92, 0.04],
+  103: [0.02, 0.95],
+  104: [0.05, 0.02]
+}
+
+tokenId = 101
+output = [0.95, 0.10]</pre>
+        <p>This is the first major mathematical transformation inside the LLM.</p>
+        <div class="memory">Token ID → Embedding Vector</div>
+      </section>
+
+      <section id="s9">
+        <h2>9. What Does Each Number Mean?</h2>
+        <p>
+          In simple teaching examples, we may say dimension 1 means royalty, dimension 2 means food,
+          and dimension 3 means vehicle. But in real LLMs, dimensions are not so clean.
+        </p>
+        <pre>king = [0.21, -0.45, 0.88, 0.12, 0.66, ...]</pre>
+        <p>
+          The meaning of “king” is spread across the full vector.
+          This is called <strong>distributed representation</strong>.
+        </p>
+        <div class="note">
+          A single dimension may not mean exactly one human concept. Meaning is distributed across many numbers.
+        </div>
+      </section>
+
+      <section id="s10">
+        <h2>10. Similarity Between Embeddings</h2>
+        <p>
+          Once words or sentences become vectors, we can compare them mathematically.
+          A common method is <strong>cosine similarity</strong>. It checks whether two vectors point in a similar direction.
+        </p>
+        <table>
+          <thead><tr><th>Pair</th><th>Similarity</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>similarity(king, queen)</td><td>0.91</td><td>Very similar</td></tr>
+            <tr><td>similarity(king, apple)</td><td>0.18</td><td>Weak relation</td></tr>
+            <tr><td>similarity(apple, mango)</td><td>0.88</td><td>Similar</td></tr>
+          </tbody>
+        </table>
+        <table>
+          <thead><tr><th>Cosine Similarity</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>0.90+</td><td>Very similar</td></tr>
+            <tr><td>0.70–0.89</td><td>Related</td></tr>
+            <tr><td>0.40–0.69</td><td>Some relation</td></tr>
+            <tr><td>0.00–0.39</td><td>Weak relation</td></tr>
+            <tr><td>Negative</td><td>Opposite or unrelated direction</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="s11">
+        <h2>11. Tiny Cosine Similarity Intuition</h2>
+        <p>Suppose:</p>
+        <pre>king  = [0.95, 0.05]
+queen = [0.92, 0.04]
+apple = [0.02, 0.95]</pre>
+        <p>
+          <strong>king</strong> and <strong>queen</strong> point almost in the same direction.
+          So similarity is high. <strong>king</strong> and <strong>apple</strong> point in very different directions.
+          So similarity is low.
+        </p>
+        <p>This is why embeddings are useful for:</p>
+        <pre>search
+recommendation
+clustering
+RAG
+semantic matching</pre>
+        <div class="memory">
+          Embeddings make meaning measurable.
+        </div>
+      </section>
+
+      <section id="tool2" class="tool">
+        <h2>Tool 2: Distance and Cosine Similarity Calculator</h2>
+        <p>Select two words and compare them.</p>
+        <div class="controls">
+          <select id="wordA"></select><select id="wordB"></select><button id="compareBtn">Compare</button>
+        </div>
+        <div class="result">
+          <p><strong>Distance:</strong> <span id="distanceResult">—</span></p>
+          <p><strong>Cosine Similarity:</strong> <span id="cosineResult">—</span></p>
+          <p id="meaningResult" class="big"></p>
+        </div>
+      </section>
+
+      <section id="s12">
+        <h2>12. Word Embedding vs Sentence Embedding</h2>
+        <p>There are different levels of embeddings.</p>
+        <h3>Token / Word Embedding</h3>
+        <pre>"king"  → vector
+"queen" → vector
+"apple" → vector</pre>
+        <p>Used inside LLMs.</p>
+        <h3>Sentence Embedding</h3>
+        <pre>"How do I reset my password?" → vector
+"I forgot my login password." → vector</pre>
+        <p>These two sentences are different in words but similar in meaning.</p>
+        <h3>Document Embedding</h3>
+        <pre>Full PDF page → vector
+Full product description → vector
+Full policy paragraph → vector</pre>
+        <p>Used in semantic search and RAG.</p>
+        <table>
+          <thead><tr><th>Type</th><th>Input</th><th>Output</th><th>Used For</th></tr></thead>
+          <tbody>
+            <tr><td>Word/token embedding</td><td>One token</td><td>Vector</td><td>Inside LLM</td></tr>
+            <tr><td>Sentence embedding</td><td>Full sentence</td><td>Vector</td><td>Semantic search</td></tr>
+            <tr><td>Document embedding</td><td>Paragraph/document chunk</td><td>Vector</td><td>RAG</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="tool3" class="tool">
+        <h2>Tool 3: Sentence Similarity Example</h2>
+        <p>This demonstrates how two different sentences can have similar meaning.</p>
+        <div class="sent-grid">
+          <div><h3>Sentence A</h3><textarea id="sentenceA">I forgot my password.</textarea></div>
+          <div><h3>Sentence B</h3><textarea id="sentenceB">How can I reset my login?</textarea></div>
+        </div>
+        <div class="controls">
+          <button id="sentenceBtn">Check Sentence Similarity</button>
+          <button class="secondary" id="exampleSimilar">Load Similar Example</button>
+          <button class="secondary" id="exampleDifferent">Load Different Example</button>
+        </div>
+        <div class="result">
+          <p><strong>Similarity:</strong> <span id="sentenceSimilarity">—</span></p>
+          <p id="sentenceMeaning" class="big"></p>
+          <p class="small">This tool uses simple teaching logic. A real system would use an embedding model.</p>
+        </div>
+      </section>
+
+      <section id="s13">
+        <h2>13. Why Embeddings Are Powerful</h2>
+        <p>
+          Embeddings move us from exact word matching to meaning matching.
+        </p>
+        <h3>Old Search</h3>
+        <pre>Query: car insurance</pre>
+        <p>Old keyword search may only find documents containing exactly:</p>
+        <pre>car insurance</pre>
+        <h3>Embedding-Based Search</h3>
+        <p>Embedding search can also find:</p>
+        <pre>vehicle policy
+auto coverage
+motor claim protection</pre>
+        <p>because the meaning is close.</p>
+        <div class="memory">
+          This is the heart of semantic search: search by meaning, not only by exact words.
+        </div>
+      </section>
+
+      <section id="s14">
+        <h2>14. Embeddings vs One-Hot Encoding</h2>
+        <p>Suppose vocabulary has five words:</p>
+        <pre>king, queen, apple, mango, car</pre>
+        <table>
+          <thead><tr><th>Word</th><th>One-Hot Vector</th></tr></thead>
+          <tbody>
+            <tr><td>king</td><td>[1, 0, 0, 0, 0]</td></tr>
+            <tr><td>queen</td><td>[0, 1, 0, 0, 0]</td></tr>
+            <tr><td>apple</td><td>[0, 0, 1, 0, 0]</td></tr>
+            <tr><td>mango</td><td>[0, 0, 0, 1, 0]</td></tr>
+            <tr><td>car</td><td>[0, 0, 0, 0, 1]</td></tr>
+          </tbody>
+        </table>
+        <p>Problem:</p>
+        <pre>king and queen look completely unrelated.
+apple and mango look completely unrelated.</pre>
+        <p>Embedding example:</p>
+        <table>
+          <thead><tr><th>Word</th><th>Embedding Vector</th></tr></thead>
+          <tbody>
+            <tr><td>king</td><td>[0.95, 0.05]</td></tr>
+            <tr><td>queen</td><td>[0.92, 0.04]</td></tr>
+            <tr><td>apple</td><td>[0.02, 0.95]</td></tr>
+            <tr><td>mango</td><td>[0.03, 0.91]</td></tr>
+            <tr><td>car</td><td>[0.50, 0.20]</td></tr>
+          </tbody>
+        </table>
+        <div class="memory">In one-hot encoding, all words are equally different. Embeddings solve this.</div>
+      </section>
+
+      <section id="s15">
+        <h2>15. Document Embeddings and Chunks</h2>
+        <p>
+          When we build RAG or semantic search, we usually do not embed the full book or full PDF as one big vector.
+          Instead, we break it into smaller parts called chunks.
+        </p>
+        <p>Why chunks?</p>
+        <pre>Page 1: Leave policy
+Page 2: Refund policy
+Page 3: Security policy
+Page 4: Travel policy</pre>
+        <p>
+          If we convert the full document into one embedding, the meaning becomes too mixed.
+          Better approach:
+        </p>
+        <pre>Document
+ ↓
+Split into chunks
+ ↓
+Embed each chunk separately
+ ↓
+Store each chunk vector</pre>
+        <table>
+          <thead><tr><th>Chunk ID</th><th>Chunk Text</th></tr></thead>
+          <tbody>
+            <tr><td>C1</td><td>Customers can request a refund within 14 days of purchase.</td></tr>
+            <tr><td>C2</td><td>Employees can apply for annual leave through the HR portal.</td></tr>
+            <tr><td>C3</td><td>All users must enable multi-factor authentication.</td></tr>
+            <tr><td>C4</td><td>Business travel must be approved by the manager.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="s16">
+        <h2>16. Embeddings in RAG</h2>
+        <p>RAG means Retrieval-Augmented Generation.</p>
+        <pre>User Question
+ ↓
+Convert question to embedding
+ ↓
+Search similar document embeddings
+ ↓
+Retrieve relevant chunks
+ ↓
+Send chunks + question to LLM
+ ↓
+Generate answer</pre>
+        <p>Example:</p>
+        <pre>Question:
+What is our refund policy?</pre>
+        <p>Embedding search may find a document chunk like:</p>
+        <pre>Customers can request reimbursement within 14 days...</pre>
+        <p>Even if the exact word “refund” is not used.</p>
+        <div class="memory">That is why embeddings matter so much in enterprise AI.</div>
+      </section>
+
+      <section id="s17">
+        <h2>17. Embeddings in Vector Databases</h2>
+        <p>
+          When we create embeddings for many documents, we need to store and search them.
+          That is where vector databases come in.
+        </p>
+        <p>Examples:</p>
+        <pre>KDB.AI
+Pinecone
+Weaviate
+Milvus
+Qdrant
+Chroma
+FAISS
+Azure AI Search
+PostgreSQL + pgvector</pre>
+        <p>The flow:</p>
+        <pre>Documents
+ ↓
+Chunks
+ ↓
+Embeddings
+ ↓
+Vector DB
+ ↓
+Similarity Search
+ ↓
+Relevant Context
+ ↓
+LLM</pre>
+        <p>A vector database usually stores two things:</p>
+        <pre>1. Embedding vector
+2. Metadata</pre>
+        <table>
+          <thead><tr><th>Chunk ID</th><th>Vector</th><th>Metadata</th></tr></thead>
+          <tbody>
+            <tr><td>C1</td><td>[0.90, 0.10]</td><td>document: policy.pdf, page: 2, topic: refund</td></tr>
+            <tr><td>C2</td><td>[0.15, 0.80]</td><td>document: hr.pdf, page: 5, topic: leave</td></tr>
+            <tr><td>C3</td><td>[0.20, 0.20]</td><td>document: security.pdf, page: 3, topic: MFA</td></tr>
+            <tr><td>C4</td><td>[0.30, 0.65]</td><td>document: travel.pdf, page: 7, topic: travel</td></tr>
+          </tbody>
+        </table>
+        <div class="memory">Metadata helps trace the answer back to source.</div>
+      </section>
+
+      <section id="s18">
+        <h2>18. Complete Mini RAG Example Using Embeddings</h2>
+        <div class="rag-flow">
+          <div class="rag-step">Documents</div><div class="rag-step">Chunks</div><div class="rag-step">Embeddings</div><div class="rag-step">Vector DB</div>
+          <div class="rag-step">User Question</div><div class="rag-step">Question Embedding</div><div class="rag-step">Similarity Search</div><div class="rag-step">LLM Answer</div>
+        </div>
+        <h3>Step 1: Original Document</h3>
+        <pre>Company Policy Document
+
+1. Customers can request a refund within 14 days of purchase.
+2. Employees can apply for annual leave through the HR portal.
+3. All users must enable multi-factor authentication.
+4. Business travel must be approved by the manager.</pre>
+        <h3>Step 2: Fake Embeddings</h3>
+        <table>
+          <thead><tr><th>Chunk</th><th>Topic</th><th>Fake Embedding</th></tr></thead>
+          <tbody>
+            <tr><td>C1</td><td>Refund</td><td>[0.95, 0.10]</td></tr>
+            <tr><td>C2</td><td>Leave</td><td>[0.20, 0.90]</td></tr>
+            <tr><td>C3</td><td>Security</td><td>[0.35, 0.35]</td></tr>
+            <tr><td>C4</td><td>Travel Approval</td><td>[0.25, 0.75]</td></tr>
+          </tbody>
+        </table>
+        <h3>Step 3: User Question</h3>
+        <pre>Can I get my money back after buying?</pre>
+        <p>Notice the question does not use the word “refund”, but the meaning is refund.</p>
+        <h3>Step 4: Question Embedding</h3>
+        <pre>Question = [0.92, 0.12]</pre>
+        <h3>Step 5: Search Similar Chunks</h3>
+        <table>
+          <thead><tr><th>Chunk</th><th>Chunk Vector</th><th>Similarity</th></tr></thead>
+          <tbody>
+            <tr><td>C1 Refund</td><td>[0.95, 0.10]</td><td>0.999</td></tr>
+            <tr><td>C2 Leave</td><td>[0.20, 0.90]</td><td>0.342</td></tr>
+            <tr><td>C3 Security</td><td>[0.35, 0.35]</td><td>0.793</td></tr>
+            <tr><td>C4 Travel</td><td>[0.25, 0.75]</td><td>0.431</td></tr>
+          </tbody>
+        </table>
+        <h3>Step 6: Retrieved Context</h3>
+        <pre>Customers can request a refund within 14 days of purchase.</pre>
+        <h3>Step 7: LLM Answer</h3>
+        <pre>Yes. According to the policy, customers can request a refund within 14 days of purchase.</pre>
+        <div class="memory">Embeddings help the system find the right knowledge before the LLM answers.</div>
+      </section>
+
+      <section id="s19">
+        <h2>19. Keyword Search vs Embedding Search</h2>
+        <p>Keyword search looks for exact or near-exact words. Embedding search looks for meaning.</p>
+        <table>
+          <thead><tr><th>User Query</th><th>Document Text</th><th>Keyword Search</th><th>Embedding Search</th></tr></thead>
+          <tbody>
+            <tr><td>money back</td><td>refund policy</td><td>Weak</td><td>Strong</td></tr>
+            <tr><td>forgot login</td><td>reset password</td><td>Weak / Medium</td><td>Strong</td></tr>
+            <tr><td>sick leave</td><td>medical absence</td><td>Weak</td><td>Strong</td></tr>
+            <tr><td>car insurance</td><td>vehicle coverage</td><td>Weak</td><td>Strong</td></tr>
+            <tr><td>price cut</td><td>discount</td><td>Weak</td><td>Strong</td></tr>
+            <tr><td>laptop not starting</td><td>device power issue</td><td>Weak</td><td>Strong</td></tr>
+          </tbody>
+        </table>
+        <p>But keyword search is not useless. It is very useful for exact things:</p>
+        <pre>invoice number INV-10291
+employee ID E4582
+error code ORA-12514
+order ID ORD-7781
+function name CalculateTax()
+table name CustomerOrders</pre>
+        <div class="note">Best real-world approach: Hybrid Search = keyword search + embedding search.</div>
+      </section>
+
+      <section id="s20">
+        <h2>20. How Embeddings Are Learned During Training</h2>
+        <p>At the beginning of training, the embedding table starts with random values.</p>
+        <table>
+          <thead><tr><th>Token</th><th>Token ID</th><th>Initial Random Embedding</th></tr></thead>
+          <tbody>
+            <tr><td>king</td><td>101</td><td>[0.13, -0.52]</td></tr>
+            <tr><td>queen</td><td>102</td><td>[-0.44, 0.31]</td></tr>
+            <tr><td>apple</td><td>103</td><td>[0.77, -0.10]</td></tr>
+          </tbody>
+        </table>
+        <p>Then the model sees text again and again:</p>
+        <pre>The king lives in the palace.
+The queen lives in the palace.
+The prince lives in the palace.
+
+I ate an apple.
+I ate a mango.
+I ate a banana.</pre>
+        <p>How does the model know it is wrong?</p>
+        <pre>The king lives in the ______
+
+Expected answer:
+palace
+
+If the model predicts:
+banana
+
+That is wrong. Loss is high.
+Training adjusts internal numbers, including embeddings.</pre>
+        <p>
+          In neural network language, embedding values are trainable parameters.
+          Like linear regression adjusted m and c, LLMs adjust embedding weights, attention weights,
+          feed-forward weights, and many other parameters.
+        </p>
+        <div class="memory">Meaning is learned from how words appear with other words.</div>
+      </section>
+
+      <section id="s21">
+        <h2>21. Embeddings and Next-Token Prediction</h2>
+        <p>LLMs are trained mainly like this:</p>
+        <pre>Given previous tokens, predict the next token.</pre>
+        <p>Example:</p>
+        <pre>The king lives in the ______</pre>
+        <p>Expected next token:</p>
+        <pre>palace</pre>
+        <p>Full flow:</p>
+        <pre>Text
+ ↓
+Tokens
+ ↓
+Token IDs
+ ↓
+Embeddings
+ ↓
+Transformer layers
+ ↓
+Prediction scores
+ ↓
+Next token</pre>
+        <p>Prediction is probability:</p>
+        <table>
+          <thead><tr><th>Possible Next Token</th><th>Probability</th></tr></thead>
+          <tbody>
+            <tr><td>palace</td><td>0.52</td></tr>
+            <tr><td>castle</td><td>0.21</td></tr>
+            <tr><td>kingdom</td><td>0.11</td></tr>
+            <tr><td>house</td><td>0.06</td></tr>
+            <tr><td>banana</td><td>0.001</td></tr>
+          </tbody>
+        </table>
+        <table>
+          <thead><tr><th>ML Regression</th><th>LLM Training</th></tr></thead>
+          <tbody>
+            <tr><td>Input x</td><td>Input tokens</td></tr>
+            <tr><td>m, c</td><td>Embeddings + model weights</td></tr>
+            <tr><td>Predict y</td><td>Predict next token</td></tr>
+            <tr><td>Calculate error</td><td>Calculate loss</td></tr>
+            <tr><td>Adjust m, c</td><td>Adjust weights</td></tr>
+            <tr><td>Repeat</td><td>Repeat</td></tr>
+          </tbody>
+        </table>
+        <div class="note">Embedding alone does not understand the full sentence. Transformer layers refine meaning using context.</div>
+      </section>
+
+      <section id="s22">
+        <h2>22. Positional Embeddings</h2>
+        <p>Embeddings give meaning to tokens. But the model also needs to know position and order.</p>
+        <pre>Ram loves Sita.
+Sita loves Ram.</pre>
+        <p>Both sentences have the same words, but the meaning changes because order changes.</p>
+        <div class="memory">InputVector(token) = TokenEmbedding(token) + PositionEmbedding(position)</div>
+        <h3>Sentence: Ram loves Sita</h3>
+        <table>
+          <thead><tr><th>Token</th><th>Position</th><th>Token Embedding</th><th>Position Embedding</th><th>Final Vector</th></tr></thead>
+          <tbody>
+            <tr><td>Ram</td><td>1</td><td>[0.80, 0.10]</td><td>[0.01, 0.03]</td><td>[0.81, 0.13]</td></tr>
+            <tr><td>loves</td><td>2</td><td>[0.40, 0.60]</td><td>[0.02, 0.04]</td><td>[0.42, 0.64]</td></tr>
+            <tr><td>Sita</td><td>3</td><td>[0.78, 0.12]</td><td>[0.03, 0.05]</td><td>[0.81, 0.17]</td></tr>
+          </tbody>
+        </table>
+        <h3>Sentence: Sita loves Ram</h3>
+        <table>
+          <thead><tr><th>Token</th><th>Position</th><th>Token Embedding</th><th>Position Embedding</th><th>Final Vector</th></tr></thead>
+          <tbody>
+            <tr><td>Sita</td><td>1</td><td>[0.78, 0.12]</td><td>[0.01, 0.03]</td><td>[0.79, 0.15]</td></tr>
+            <tr><td>loves</td><td>2</td><td>[0.40, 0.60]</td><td>[0.02, 0.04]</td><td>[0.42, 0.64]</td></tr>
+            <tr><td>Ram</td><td>3</td><td>[0.80, 0.10]</td><td>[0.03, 0.05]</td><td>[0.83, 0.15]</td></tr>
+          </tbody>
+        </table>
+        <p>Same token, different position, different final input vector.</p>
+        <div class="memory">Token embeddings tell what the word means. Positional embeddings tell where the word is.</div>
+      </section>
+
+      <section id="summary" class="summary">
+        <h2>23. Final Summary</h2>
+        <div class="memory">
+          Embeddings allow AI systems to search, compare, and retrieve knowledge by meaning instead of exact words.
+        </div>
+        <pre>Text → Tokens → Token IDs → Embeddings → Transformer / Vector Search → RAG / Answer</pre>
+        <pre>Token ID identifies the token.
+Embedding vector represents meaning.
+Similar meanings have similar vectors.
+Embeddings are learned from context.
+Embedding lookup is like a dictionary.
+Distance measures how far meaning points are.
+Cosine similarity compares meaning direction.
+Word embeddings, sentence embeddings, and document embeddings are used differently.
+Embeddings make semantic search powerful.
+Document chunks + embeddings support RAG.
+Vector databases store and search embedding vectors.
+Positional embeddings add order information.</pre>
+        <a class="top" href="#top">Back to top ↑</a>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+const words=[
+  {word:"king",id:101,vector:[0.95,0.10],group:"royalty"},
+  {word:"queen",id:102,vector:[0.92,0.12],group:"royalty"},
+  {word:"prince",id:103,vector:[0.88,0.16],group:"royalty"},
+  {word:"crown",id:104,vector:[0.86,0.18],group:"royalty"},
+  {word:"apple",id:105,vector:[0.05,0.90],group:"fruit"},
+  {word:"mango",id:106,vector:[0.04,0.88],group:"fruit"},
+  {word:"banana",id:107,vector:[0.06,0.84],group:"fruit"},
+  {word:"fruit",id:108,vector:[0.08,0.86],group:"fruit"},
+  {word:"car",id:109,vector:[0.55,0.25],group:"vehicle"},
+  {word:"bus",id:110,vector:[0.58,0.28],group:"vehicle"},
+  {word:"train",id:111,vector:[0.62,0.30],group:"vehicle"},
+  {word:"vehicle",id:112,vector:[0.60,0.26],group:"vehicle"}
+];
+const table=document.getElementById("embeddingTable");
+const plane=document.getElementById("plane");
+const selectedWord=document.getElementById("selectedWord");
+const selectedVector=document.getElementById("selectedVector");
+const nearestWords=document.getElementById("nearestWords");
+const wordA=document.getElementById("wordA");
+const wordB=document.getElementById("wordB");
+function vectorText(v){return "["+v.map(n=>n.toFixed(2)).join(", ")+"]";}
+function distance(a,b){return Math.sqrt(Math.pow(a[0]-b[0],2)+Math.pow(a[1]-b[1],2));}
+function cosine(a,b){
+  const dot=a[0]*b[0]+a[1]*b[1];
+  const magA=Math.sqrt(a[0]*a[0]+a[1]*a[1]);
+  const magB=Math.sqrt(b[0]*b[0]+b[1]*b[1]);
+  return dot/(magA*magB);
+}
+function getWord(name){return words.find(w=>w.word===name);}
+function renderTable(){
+  table.innerHTML=words.map(w=>`<tr><td>${w.word}</td><td>${w.id}</td><td>${vectorText(w.vector)}</td></tr>`).join("");
+}
+function renderDropdowns(){
+  words.forEach(w=>{
+    const a=document.createElement("option");a.value=w.word;a.textContent=w.word;wordA.appendChild(a);
+    const b=document.createElement("option");b.value=w.word;b.textContent=w.word;wordB.appendChild(b);
+  });
+  wordA.value="king";wordB.value="queen";
+}
+function renderPlane(){
+  words.forEach(w=>{
+    const x=10+w.vector[0]*82;
+    const y=12+w.vector[1]*78;
+    const dot=document.createElement("div");
+    dot.className="dot";dot.style.left=x+"%";dot.style.bottom=y+"%";dot.title=w.word;dot.dataset.word=w.word;
+    const label=document.createElement("div");
+    label.className="dot-label";label.style.left=x+"%";label.style.bottom=y+"%";label.textContent=w.word;
+    dot.addEventListener("click",()=>selectWord(w.word));
+    plane.appendChild(dot);plane.appendChild(label);
+  });
+}
+function selectWord(name){
+  const selected=getWord(name);
+  document.querySelectorAll(".dot").forEach(d=>d.classList.toggle("active",d.dataset.word===name));
+  selectedWord.textContent=selected.word;
+  selectedVector.textContent="Vector: "+vectorText(selected.vector);
+  const nearest=words.filter(w=>w.word!==selected.word)
+    .map(w=>({word:w.word,dist:distance(selected.vector,w.vector),cos:cosine(selected.vector,w.vector)}))
+    .sort((a,b)=>a.dist-b.dist).slice(0,4);
+  nearestWords.innerHTML=nearest.map(n=>`<li>${n.word} <span class="small">(distance ${n.dist.toFixed(3)}, cosine ${n.cos.toFixed(3)})</span></li>`).join("");
+}
+function compareWords(){
+  const a=getWord(wordA.value);const b=getWord(wordB.value);
+  const d=distance(a.vector,b.vector);const c=cosine(a.vector,b.vector);
+  document.getElementById("distanceResult").textContent=d.toFixed(3);
+  document.getElementById("cosineResult").textContent=c.toFixed(3);
+  let meaning="";
+  if(c>=0.96 && d<0.12){meaning="Very close meaning.";}
+  else if(c>=0.85){meaning="Related or somewhat similar direction.";}
+  else{meaning="Weak similarity.";}
+  document.getElementById("meaningResult").textContent=meaning;
+}
+function sentenceScore(a,b){
+  const lowerA=a.toLowerCase();const lowerB=b.toLowerCase();
+  const account=["password","login","sign in","signin","account","reset","forgot","locked"];
+  const food=["mango","apple","sweet","juice","banana","fruit","eat"];
+  const count=(text,list)=>list.reduce((sum,w)=>sum+(text.includes(w)?1:0),0);
+  const aAcc=count(lowerA,account),bAcc=count(lowerB,account),aFood=count(lowerA,food),bFood=count(lowerB,food);
+  if(aAcc>0 && bAcc>0){return {score:"High",meaning:"Both sentences are about account access."};}
+  if(aFood>0 && bFood>0){return {score:"High",meaning:"Both sentences are about food or fruit."};}
+  if((aAcc>0 && bFood>0)||(aFood>0 && bAcc>0)){return {score:"Low",meaning:"The sentences are from different topics."};}
+  return {score:"Medium",meaning:"Some relation may exist, but this teaching demo cannot strongly identify it."};
+}
+function checkSentenceSimilarity(){
+  const a=document.getElementById("sentenceA").value;
+  const b=document.getElementById("sentenceB").value;
+  const result=sentenceScore(a,b);
+  document.getElementById("sentenceSimilarity").textContent=result.score;
+  document.getElementById("sentenceMeaning").textContent=result.meaning;
+}
+document.getElementById("compareBtn").addEventListener("click",compareWords);
+document.getElementById("sentenceBtn").addEventListener("click",checkSentenceSimilarity);
+document.getElementById("exampleSimilar").addEventListener("click",()=>{
+  document.getElementById("sentenceA").value="I forgot my password.";
+  document.getElementById("sentenceB").value="How can I reset my login?";
+  checkSentenceSimilarity();
+});
+document.getElementById("exampleDifferent").addEventListener("click",()=>{
+  document.getElementById("sentenceA").value="I forgot my password.";
+  document.getElementById("sentenceB").value="The mango is sweet.";
+  checkSentenceSimilarity();
+});
+renderTable();renderDropdowns();renderPlane();selectWord("king");compareWords();checkSentenceSimilarity();
+</script>
+</body>
+</html>
