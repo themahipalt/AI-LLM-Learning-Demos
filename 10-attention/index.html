@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>10 — Attention Final Complete Deep Study Page</title>
+<style>
+:root {
+  --bg:#f4f8fc; --card:#ffffff; --ink:#0f2138; --muted:#52647c; --line:#cfe0f4;
+  --blue:#2563eb; --soft:#eaf3ff; --accent:#0f766e; --warn:#f59e0b; --bad:#e5e7eb;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#f7fbff,#eef5fd);color:var(--ink);font-size:15px;line-height:1.65}
+.wrapper{max-width:1220px;margin:0 auto;padding:20px}
+.hero{background:linear-gradient(135deg,#0f2138,#1d4ed8);color:#fff;border-radius:24px;padding:30px;box-shadow:0 18px 50px rgba(15,33,56,.18);margin-bottom:18px}
+.hero h1{margin:0 0 8px;font-size:34px;letter-spacing:-.03em}
+.hero p{max-width:900px;margin:0;color:#dbeafe}
+.topbar{display:none}
+.topbar-inner{display:none}
+.floating-toggle{position:fixed!important;right:28px!important;top:18px!important;z-index:99999!important;background:#fff;color:#0b1220;border:1px solid var(--line);border-radius:999px;padding:13px 18px;font-weight:900;box-shadow:0 14px 34px rgba(15,33,56,.22);cursor:pointer}
+.floating-toggle::before{content:'☰ ';font-weight:900;color:#1d4ed8}
+.floating-toggle:hover{background:var(--soft);border-color:#9cc3ff}
+.contents{scroll-margin-top:80px}
+body.contents-open{padding-top:0}
+button,.btn{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 14px;font-weight:700;cursor:pointer;color:#07162b;box-shadow:0 4px 14px rgba(15,33,56,.06)}
+button:hover,.btn:hover{background:#f8fbff;border-color:#99b9e6}
+.contents{display:none;background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:20px;box-shadow:0 8px 28px rgba(15,33,56,.08)}
+.contents.show{display:block;position:fixed!important;top:76px!important;right:28px!important;left:28px!important;z-index:99998!important;max-height:calc(100vh - 105px);overflow:auto;background:rgba(255,255,255,.98);backdrop-filter:blur(8px);box-shadow:0 24px 70px rgba(15,33,56,.26)}
+.contents h2{margin:0 0 12px;font-size:20px}
+.contents-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.contents-grid a{display:block;text-decoration:none;color:#243b57;border:1px solid var(--line);border-radius:14px;background:#fbfdff;padding:11px 12px;min-height:52px}
+.contents-grid a:hover{background:var(--soft);color:#123e8a}
+.card,.demo{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px 26px;margin:16px 0;box-shadow:0 8px 26px rgba(15,33,56,.05)}
+.chapter-marker{background:linear-gradient(135deg,#123e8a,#0f766e);color:#fff;border:0;border-radius:24px;padding:24px 28px;margin:24px 0 12px;box-shadow:0 16px 42px rgba(15,33,56,.18)}
+.chapter-marker h2{margin:0 0 8px;color:#fff;font-size:26px}.chapter-marker p{color:#eaf3ff;margin:0;max-width:980px}
+.callout{border-left:5px solid #2563eb;background:#eff6ff;border-radius:16px;padding:12px 16px;margin:14px 0}.callout b{color:#123e8a}
+.card h2,.demo h2{font-size:24px;line-height:1.22;margin:4px 0 12px;letter-spacing:-.02em}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:#58708e;font-weight:800}
+p{margin:10px 0;color:#172b47}
+pre{background:#f3f6fa;border:1px solid #e3e9f2;border-radius:18px;padding:14px;overflow:auto;font-size:13px;line-height:1.55}
+code{font-family:Consolas,Monaco,monospace}
+.table-wrap{overflow:auto;margin:14px 0;border:1px solid #d8e4f2;border-radius:16px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{border-bottom:1px solid #e6edf6;padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#f6faff;color:#243b57;font-size:13px}
+tr:last-child td{border-bottom:0}
+.demo{border-color:#b7d7ff;background:linear-gradient(180deg,#ffffff,#f8fbff)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.token-line{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.token{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;font-weight:700;transition:.2s}
+.token.strong{background:#dbeafe;border-color:#2563eb;transform:translateY(-2px)}
+.token.med{background:#ecfdf5;border-color:#10b981}
+.token.weak{background:#fff7ed;border-color:#f59e0b}
+.explain{border-left:4px solid var(--blue);background:#eff6ff;border-radius:14px;padding:12px 14px;margin-top:12px;color:#16355f}
+.matrix-row{cursor:pointer}
+.matrix-row:hover td{background:#f0f7ff}
+.allowed{background:#ecfdf5;font-weight:700}
+.blocked{background:#f1f5f9;color:#94a3b8;text-decoration:line-through}
+.footer{text-align:center;color:#52647c;padding:28px}
+.to-top{position:fixed;right:20px;bottom:20px;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:12px 16px;font-weight:800;color:#1d4ed8;box-shadow:0 10px 30px rgba(15,33,56,.12)}
+@media(max-width:900px){.contents-grid{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:28px}}
+@media(max-width:560px){.wrapper{padding:12px}.contents-grid{grid-template-columns:1fr}.card,.demo{padding:18px}body{font-size:14px}.floating-toggle{right:12px!important;top:10px!important;padding:11px 13px;font-size:13px}.contents.show{top:62px!important;left:12px!important;right:12px!important}}
+</style>
+</head>
+<body>
+<button class="floating-toggle" onclick="toggleContents()">Show / Hide Contents</button>
+<div class="wrapper">
+<header class="hero">
+<h1>10 — Attention</h1>
+<p>Full deep study chapter with reading material, manual calculations, complete Attention Matrix section, complete Masked Attention section, complete Attention inside the Transformer block section, Multi-Head Attention, and interactive demos at the bottom.</p>
+</header>
+<nav id="contents" class="contents"><h2>Contents <span style="font-size:13px;color:#52647c;font-weight:600">(floating panel)</span></h2><div class="contents-grid"><a href="#s1">1. Why Attention was needed</a>
+<a href="#s2">2. Problem with remembering long sequences</a>
+<a href="#s3">3. RNN hidden state bottleneck</a>
+<a href="#s4">4. LSTM helped, but did not fully solve it</a>
+<a href="#s5">5. Translation problem example</a>
+<a href="#s6">6. Human attention intuition</a>
+<a href="#s7">7. Attention as selective focus</a>
+<a href="#s8">8. Attention is not equal focus</a>
+<a href="#s9">9. Every word can look at other words</a>
+<a href="#s10">10. Same word, different context</a>
+<a href="#s11">11. Pronoun reference problem</a>
+<a href="#s12">12. Meaning depends on surrounding words</a>
+<a href="#s13">13. Attention scores</a>
+<a href="#s14">14. Attention weights</a>
+<a href="#s15">15. Softmax in attention</a>
+<a href="#s16">16. Weighted sum intuition</a>
+<a href="#s17">17. Context vector</a>
+<a href="#s18">18. Attention output</a>
+<a href="#s19">19. Word embedding before attention</a>
+<a href="#s20">20. Word embedding after attention</a>
+<a href="#s21">21. Query, Key, Value intuition</a>
+<a href="#s22">22. Query means what am I looking for</a>
+<a href="#s23">23. Key means what information do I contain</a>
+<a href="#s24">24. Value means what information will I contribute</a>
+<a href="#s25">25. Query-Key matching</a>
+<a href="#s26">26. Dot product intuition</a>
+<a href="#s27">27. Scaling attention scores by square root d</a>
+<a href="#s28">28. Self-Attention</a>
+<a href="#s29">29. Why it is called self-attention</a>
+<a href="#s30">30. Every token talks to every token</a>
+<a href="#s31">31. ATTENTION MATRIX — Complete study</a>
+<a href="#s32">32. Reading the Attention Matrix</a>
+<a href="#s33">33. Manual Q/K/V Attention calculation</a>
+<a href="#s34">34. Full all-token Attention Matrix calculation</a>
+<a href="#s35">35. Attention Matrix versus output vectors</a>
+<a href="#s36">36. MASKED ATTENTION — Complete study</a>
+<a href="#s37">37. Why future tokens are hidden</a>
+<a href="#s38">38. Masked Attention table</a>
+<a href="#s39">39. Masked Attention math with -∞</a>
+<a href="#s40">40. GPT-style causal attention</a>
+<a href="#s41">41. Encoder versus decoder attention</a>
+<a href="#s42">42. Multi-head attention</a>
+<a href="#s43">43. Why one attention head is not enough</a>
+<a href="#s44">44. Different heads learn different relationships</a>
+<a href="#s45">45. Attention versus RNN memory</a>
+<a href="#s46">46. Attention versus embeddings</a>
+<a href="#s47">47. Attention and Transformers</a>
+<a href="#s48">48. Attention in next-token prediction</a>
+<a href="#s49">49. Common misconceptions about attention</a>
+<a href="#s50">50. ATTENTION INSIDE THE TRANSFORMER BLOCK — Complete study</a>
+<a href="#s51">51. Embedding + position before Attention</a>
+<a href="#s52">52. Residual connection after Attention</a>
+<a href="#s53">53. Layer normalization</a>
+<a href="#s54">54. Feed-forward network after Attention</a>
+<a href="#s55">55. Many Transformer blocks refine meaning</a>
+<a href="#s56">56. Attention is learned</a>
+<a href="#s57">57. Attention as memory access</a>
+<a href="#s58">58. Full simple analogy</a>
+<a href="#s59">59. Complete example with it and road</a>
+<a href="#s60">60. Website demo idea 1 Word Focus Simulator</a>
+<a href="#s61">61. Website demo idea 2 Tiny Attention Calculator</a>
+<a href="#s62">62. Website demo idea 3 Attention Matrix</a>
+<a href="#s63">63. Website demo idea 4 Masked Attention Playground</a>
+<a href="#s64">64. Website demo idea 5 Multi-Head Lens Preview</a>
+<a href="#s65">65. Mini exercise</a>
+<a href="#s66">66. Quiz</a>
+<a href="#s67">67. Final checklist</a>
+<a href="#s68">68. Bridge to Transformer</a>
+<a href="#interactive-demos">Interactive demos at bottom</a></div></nav>
+<section class="card" id="must-have-check"><div class="eyebrow">Important coverage check</div><h2>Must-have topics included in this page</h2><p>The three parts that were earlier looking missing are now present as full deep-study blocks, not only demo notes:</p><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Where it is covered</th></tr></thead><tbody><tr><td><b>Attention Matrix</b></td><td>Sections 31–35 + Demo 3 at bottom</td></tr><tr><td><b>Masked Attention</b></td><td>Sections 36–41 + Demo 4 at bottom</td></tr><tr><td><b>Attention inside the Transformer block</b></td><td>Sections 50–55</td></tr></tbody></table></div></section>
+<section class="card" id="s1"><div class="eyebrow">Section 1</div><h2>1. Why Attention was needed</h2><p>In Sequence Learning we saw that RNNs, LSTMs and GRUs read text one step at a time. This worked better than normal feed-forward networks because the model had a memory-like hidden state. But language often needs long-distance connections. A word near the end of a sentence may depend on a word near the beginning.</p><p>Example: <b>Deepak, after preparing slides, checking the demo, fixing the laptop, and arranging the projector, entered the room because he had to teach AI.</b> To understand <b>he</b>, the model must connect it back to <b>Deepak</b>, even though many words come in between.</p><p>Attention was created to reduce this difficulty. Instead of forcing all information to travel through one hidden state, Attention allows a token to directly look at other useful tokens. The word <b>he</b> can directly focus on <b>Deepak</b>.</p><pre><code>Attention idea:
+For this token, which other tokens should I focus on?</code></pre></section>
+<section class="card" id="s2"><div class="eyebrow">Section 2</div><h2>2. Problem with remembering long sequences</h2><p>Long sequences are hard because every new word may add new information. If a model must keep everything in one running memory, older information can become weak. Important context can be diluted by many later words.</p><p>This is especially painful in translation, summarization, reasoning over documents, and pronoun reference. A token may need to connect with something that appeared many tokens earlier. Attention gives a more direct path for that connection.</p><pre><code>Without Attention:
+word 1 → hidden state → hidden state → hidden state → word 30
+
+With Attention:
+word 30 can directly look back at word 1</code></pre></section>
+<section class="card" id="s3"><div class="eyebrow">Section 3</div><h2>3. RNN hidden state bottleneck</h2><p>In an RNN-style model, the hidden state is like a memory box. Every time a new token arrives, the box is updated. The problem is that a long sentence may contain many details, but the hidden state has limited capacity.</p><p>The model must compress subject, object, time, location, grammar, and meaning into a single vector. This compression creates a bottleneck. Some information may survive, but some information can become blurred or forgotten.</p><p>Attention reduces this bottleneck by keeping token representations available and letting each token collect information from the tokens it needs.</p></section>
+<section class="card" id="s4"><div class="eyebrow">Section 4</div><h2>4. LSTM helped, but did not fully solve it</h2><p>LSTM and GRU improved RNNs using gates. They helped the model keep useful information longer and forget less useful information. This was a major improvement over basic RNNs.</p><p>But even with LSTM, information still flows step by step. If a sentence is very long, the model still has to carry information through many transitions. Attention gave a different solution: do not depend only on memory carried through steps; allow direct token-to-token focus.</p><pre><code>LSTM improves memory.
+Attention changes the access pattern.
+Instead of only carrying memory, tokens can directly retrieve useful context.</code></pre></section>
+<section class="card" id="s5"><div class="eyebrow">Section 5</div><h2>5. Translation problem example</h2><p>Attention became famous in machine translation. Suppose the English sentence is <b>I love India</b> and the model is generating Hindi. When it generates the word corresponding to <b>India</b>, it should focus strongly on <b>India</b> in the source sentence. When it generates the word corresponding to <b>love</b>, it should focus strongly on <b>love</b>.</p><p>This alignment problem is hard if the whole source sentence is compressed into one vector. Attention lets the decoder look back at relevant source words while generating each output word.</p><div class="table-wrap"><table><thead><tr><th>Generated idea</th><th>Should focus on</th></tr></thead><tbody><tr><td>भारत</td><td>India</td></tr><tr><td>प्यार</td><td>love</td></tr><tr><td>मैं / मुझे</td><td>I</td></tr></tbody></table></div></section>
+<section class="card" id="s6"><div class="eyebrow">Section 6</div><h2>6. Human attention intuition</h2><p>When humans read, we do not give equal importance to every word. If someone says, “Open the file we created yesterday and update the README,” your mind focuses on <b>file</b>, <b>created yesterday</b>, <b>update</b>, and <b>README</b>.</p><p>Words like “the,” “we,” and “and” are still part of the sentence, but they may not be the main focus for the current task. Attention gives models a similar selective focus mechanism, but mathematically using vectors and weights.</p></section>
+<section class="card" id="s7"><div class="eyebrow">Section 7</div><h2>7. Attention as selective focus</h2><p>Attention means selective focus. It does not mean the model ignores all other words completely. It means the model gives different importance to different tokens.</p><p>For a current token, the model calculates how relevant every other token is. Some tokens get high weight, some get medium weight, and some get very low weight. Then the model mixes information according to these weights.</p><pre><code>Attention = not equal focus
+Attention = weighted focus</code></pre></section>
+<section class="card" id="s8"><div class="eyebrow">Section 8</div><h2>8. Attention is not equal focus</h2><p>If every word received equal attention, the model would not be able to resolve context well. In the sentence <b>The dog chased the ball because it was rolling</b>, the word <b>it</b> should focus more on <b>ball</b> than on <b>dog</b>.</p><p>But in <b>The dog chased the ball because it was tired</b>, the word <b>it</b> should focus more on <b>dog</b>. Same word, different attention pattern. This is why equal focus is not enough.</p></section>
+<section class="card" id="s9"><div class="eyebrow">Section 9</div><h2>9. Every word can look at other words</h2><p>In self-attention, every token gets a chance to look at every other token in the same sequence. This creates a relationship map between tokens.</p><p>For example, in <b>The student solved the problem because it was easy</b>, the word <b>it</b> may attend to <b>problem</b>, while <b>solved</b> may attend to <b>student</b> and <b>problem</b>. Each token builds its own context-aware meaning.</p><div class="table-wrap"><table><thead><tr><th>Current token</th><th>May focus on</th></tr></thead><tbody><tr><td>it</td><td>problem, easy</td></tr><tr><td>solved</td><td>student, problem</td></tr><tr><td>student</td><td>solved</td></tr><tr><td>easy</td><td>problem</td></tr></tbody></table></div></section>
+<section class="card" id="s10"><div class="eyebrow">Section 10</div><h2>10. Same word, different context</h2><p>One of the strongest benefits of Attention is contextual meaning. The word <b>bank</b> can mean a financial institution or the side of a river. The starting embedding may contain broad possibilities, but attention helps refine the meaning using surrounding words.</p><div class="table-wrap"><table><thead><tr><th>Sentence</th><th>Useful context</th><th>Likely meaning</th></tr></thead><tbody><tr><td>He deposited money in the bank.</td><td>deposited, money</td><td>financial bank</td></tr><tr><td>The boat reached the river bank.</td><td>boat, river</td><td>river side</td></tr></tbody></table></div><p>Attention helps the token update its representation based on the context around it.</p></section>
+<section class="card" id="s11"><div class="eyebrow">Section 11</div><h2>11. Pronoun reference problem</h2><p>Pronouns are a simple way to understand Attention. Words like <b>he</b>, <b>she</b>, <b>it</b>, and <b>they</b> often depend on earlier nouns.</p><p>Example: <b>The bottle fell because it was heavy.</b> Here <b>it</b> refers to <b>bottle</b>. But in <b>The table broke because it was weak</b>, <b>it</b> refers to <b>table</b>. Attention helps the model connect the pronoun to the likely source token.</p><pre><code>Invisible attention line:
+it → bottle
+it → table</code></pre></section>
+<section class="card" id="s12"><div class="eyebrow">Section 12</div><h2>12. Meaning depends on surrounding words</h2><p>A token by itself is often incomplete. The word <b>light</b> may refer to brightness or weight. The word <b>mouse</b> may refer to an animal or a computer device. The surrounding words decide the practical meaning.</p><p>Attention creates a new representation that contains the token plus useful context. So the model does not only represent <b>mouse</b>; it represents <b>mouse in this sentence</b>.</p></section>
+<section class="card" id="s13"><div class="eyebrow">Section 13</div><h2>13. Attention scores</h2><p>The first step in Attention is calculating raw scores. A score answers: how strongly does the current token match another token?</p><p>Suppose the sentence is <b>Deepak teaches AI</b> and the current token is <b>teaches</b>. The model compares <b>teaches</b> with <b>Deepak</b>, <b>teaches</b>, and <b>AI</b>.</p><div class="table-wrap"><table><thead><tr><th>Current token</th><th>Looking at</th><th>Raw score</th></tr></thead><tbody><tr><td>teaches</td><td>Deepak</td><td>4</td></tr><tr><td>teaches</td><td>teaches</td><td>5</td></tr><tr><td>teaches</td><td>AI</td><td>6</td></tr></tbody></table></div><p>These scores are not percentages yet. They are raw compatibility values. Higher score means stronger potential relevance.</p></section>
+<section class="card" id="s14"><div class="eyebrow">Section 14</div><h2>14. Attention weights</h2><p>Raw scores must be converted into attention weights. Weights are easier to interpret because they are positive and add up to 1.</p><p>For example, raw scores <b>[4, 5, 6]</b> may become weights <b>[0.09, 0.24, 0.67]</b>. This means the current token gives 9% focus to the first token, 24% to the second token, and 67% to the third token.</p><p>Attention weights are the model’s focus distribution for one current token.</p></section>
+<section class="card" id="s15"><div class="eyebrow">Section 15</div><h2>15. Softmax in attention</h2><p>Softmax is the function usually used to convert raw attention scores into attention weights. It turns a list of numbers into probability-like values.</p><p>Useful properties of softmax: all outputs are positive, all outputs add up to 1, and bigger input scores get much bigger share than smaller scores.</p><pre><code>softmax(score_i) = e^(score_i) / sum(e^(all scores))
+
+[4, 5, 6] → approximately [0.09, 0.24, 0.67]</code></pre><p>This is why Attention can clearly focus more on important tokens while still keeping small influence from others.</p></section>
+<section class="card" id="s16"><div class="eyebrow">Section 16</div><h2>16. Weighted sum intuition</h2><p>After weights are calculated, Attention mixes information from tokens. This is done using a weighted sum of Value vectors.</p><p>If the current token is <b>teaches</b>, and weights are 0.09 for Deepak, 0.24 for teaches, and 0.67 for AI, then the output is a mixture of those token values.</p><pre><code>Attention output =
+0.09 × Value(Deepak)
++ 0.24 × Value(teaches)
++ 0.67 × Value(AI)</code></pre><p>This is the core of Attention. It does not only choose a word; it creates a new context-aware vector.</p></section>
+<section class="card" id="s17"><div class="eyebrow">Section 17</div><h2>17. Context vector</h2><p>The weighted sum produces a context vector. This vector contains information gathered from relevant tokens. It is not a normal English sentence; it is a numerical representation that the model can pass to later layers.</p><p>For example, after attention, the representation of <b>it</b> may carry information from <b>ball</b> and <b>rolling</b>. This helps later layers understand that <b>it</b> most likely refers to <b>ball</b>.</p></section>
+<section class="card" id="s18"><div class="eyebrow">Section 18</div><h2>18. Attention output</h2><p>The output of Attention is a new vector for each token. Before Attention, a token has its starting embedding. After Attention, it has a context-aware representation.</p><div class="table-wrap"><table><thead><tr><th>Before Attention</th><th>After Attention</th></tr></thead><tbody><tr><td>bank = broad token meaning</td><td>bank + loan + approved context</td></tr><tr><td>it = pronoun meaning</td><td>it + ball/road/dog context</td></tr><tr><td>teaches = action meaning</td><td>teaches + subject/object context</td></tr></tbody></table></div><p>This is why Attention is more than highlighting. It changes the internal representation of tokens.</p></section>
+<section class="card" id="s19"><div class="eyebrow">Section 19</div><h2>19. Word embedding before attention</h2><p>An embedding gives a token its starting numeric meaning. It is like the model’s first guess about what the token may mean.</p><p>But starting embeddings are not enough because language is contextual. The same word can have different meanings in different sentences. Embeddings provide the base; Attention adjusts the base using context.</p></section>
+<section class="card" id="s20"><div class="eyebrow">Section 20</div><h2>20. Word embedding after attention</h2><p>After Attention, a token vector includes information from surrounding useful tokens. This is called contextual representation.</p><p>For example, <b>bank</b> near <b>loan</b> becomes more financial. <b>bank</b> near <b>river</b> becomes more geographical. The token vector is updated based on what it attended to.</p><pre><code>Embedding = base meaning
+Attention = context adjustment</code></pre></section>
+<section class="card" id="s21"><div class="eyebrow">Section 21</div><h2>21. Query, Key, Value intuition</h2><p>Query, Key, and Value are the three famous terms in Attention. They sound technical, but the analogy is simple.</p><p>Imagine a library. You ask, “I want a book about AI.” Your question is the Query. Each book has a title or label; that is the Key. The actual content inside the book is the Value.</p><div class="table-wrap"><table><thead><tr><th>Term</th><th>Simple meaning</th></tr></thead><tbody><tr><td>Query</td><td>What am I looking for?</td></tr><tr><td>Key</td><td>What information do I contain?</td></tr><tr><td>Value</td><td>What information will I contribute?</td></tr></tbody></table></div></section>
+<section class="card" id="s22"><div class="eyebrow">Section 22</div><h2>22. Query means what am I looking for</h2><p>Every token creates a Query vector. The Query represents what the current token is searching for in the surrounding context.</p><p>For example, for the token <b>it</b> in <b>The bottle fell because it was heavy</b>, the Query may be looking for an object that can be referred to by a pronoun and can be heavy. The token <b>bottle</b> has a Key that matches this well.</p><pre><code>Query(it): What object am I referring to?</code></pre></section>
+<section class="card" id="s23"><div class="eyebrow">Section 23</div><h2>23. Key means what information do I contain</h2><p>Every token creates a Key vector. The Key acts like a searchable label. It tells other tokens what kind of information this token may provide.</p><p>For example, the token <b>bottle</b> may have a Key indicating that it is an object and can be described by properties like heavy, broken, empty, or full. This makes it match the Query from <b>it</b>.</p></section>
+<section class="card" id="s24"><div class="eyebrow">Section 24</div><h2>24. Value means what information will I contribute</h2><p>The Value vector is the actual information that will be passed forward if the token receives attention. Query and Key decide the match. Value provides the content.</p><p>If <b>it</b> attends strongly to <b>bottle</b>, then the Value of <b>bottle</b> is mixed into the representation of <b>it</b>. After that, the model can treat <b>it</b> more like <b>bottle</b> in this context.</p><pre><code>Query-Key decides weight.
+Value contributes information.</code></pre></section>
+<section class="card" id="s25"><div class="eyebrow">Section 25</div><h2>25. Query-Key matching</h2><p>Attention score is usually calculated by matching the Query of the current token with the Keys of all tokens. The stronger the match, the higher the raw score.</p><p>This is why Query and Key are separate. A token asks a question using Query. Other tokens advertise what they contain using Key. The match decides where attention should go.</p><div class="table-wrap"><table><thead><tr><th>Comparison</th><th>Meaning</th></tr></thead><tbody><tr><td>Q(it) · K(bottle)</td><td>high match</td></tr><tr><td>Q(it) · K(because)</td><td>low match</td></tr><tr><td>Q(teaches) · K(AI)</td><td>may be high for taught object</td></tr></tbody></table></div></section>
+<section class="card" id="s26"><div class="eyebrow">Section 26</div><h2>26. Dot product intuition</h2><p>Dot product is a simple vector similarity operation. If two vectors point in a similar direction, the dot product is high. If they are less related, the dot product is low.</p><p>Attention uses dot product to calculate how much a Query matches a Key. In simple teaching examples, this is enough to understand the mechanism.</p><pre><code>[a, b] · [c, d] = a×c + b×d
+
+Example:
+[1,2] · [2,2] = 1×2 + 2×2 = 6</code></pre></section>
+<section class="card" id="s27"><div class="eyebrow">Section 27</div><h2>27. Scaling attention scores by square root d</h2><p>In real Transformer attention, scores are divided by the square root of the key dimension. The formula is often written as QKᵀ / √d.</p><p>Why scale? When vectors are large, dot products can become very large. Large scores can make softmax too sharp, where one token gets almost all the attention and others get nearly zero. Scaling keeps the values more stable and improves learning.</p><pre><code>Attention(Q,K,V) = softmax(QKᵀ / √d) V
+
+Simple meaning:
+match queries with keys, stabilize scores, convert to weights, mix values.</code></pre></section>
+<section class="card" id="s28"><div class="eyebrow">Section 28</div><h2>28. Self-Attention</h2><p>Self-attention means tokens inside the same sequence attend to each other. The sequence looks at itself. This is different from a translation decoder attending to an external source sentence.</p><p>In <b>The cat sat on the mat</b>, the word <b>sat</b> may attend to <b>cat</b> because the cat is doing the sitting, and to <b>mat</b> because that is related to where the sitting happens.</p><pre><code>Self-attention = tokens in the same sentence looking at each other.</code></pre></section>
+<section class="card" id="s29"><div class="eyebrow">Section 29</div><h2>29. Why it is called self-attention</h2><p>It is called self-attention because the input sequence itself provides Queries, Keys, and Values. The model is not looking at a separate memory or another sentence. It is using the same sequence to build relationships among its own tokens.</p><p>Each token creates Q, K and V from its embedding. Then every token compares its Query with all Keys and mixes Values according to the attention weights.</p></section>
+<section class="card" id="s30"><div class="eyebrow">Section 30</div><h2>30. Every token talks to every token</h2><p>A powerful feature of self-attention is that every token can communicate with every other token. This makes long-distance relationships easier than in pure RNN-style processing.</p><p>For a sentence with 5 tokens, the model can build a 5×5 attention matrix. For each row, one token decides how much to attend to all tokens. This creates a full relationship map.</p><pre><code>Token 1 → all tokens
+Token 2 → all tokens
+Token 3 → all tokens
+...</code></pre></section>
+<section class="chapter-marker" id="attention-matrix-core"><h2>Core Deep Study — Attention Matrix</h2><p>This part is the full explanation of the Attention Matrix: what the rows mean, what the columns mean, why each row adds to 1, and how the matrix is used to create new context-aware token vectors.</p></section>
+<section class="card" id="s31"><div class="eyebrow">Section 31</div><h2>31. ATTENTION MATRIX — Complete study</h2><p>The <b>Attention Matrix</b> is the table that shows how every token looks at every other token. It is one of the most useful visual ways to understand Attention.</p><p>Rows represent the <b>current token</b>. Columns represent the <b>tokens being attended to</b>. So one row answers one question: “For this current token, how much attention goes to each token in the sentence?”</p><p>For the sentence <b>Deepak teaches AI</b>, a simplified Attention Matrix may look like this:</p><div class="table-wrap"><table><thead><tr><th>Current token ↓ / Looking at →</th><th>Deepak</th><th>teaches</th><th>AI</th></tr></thead><tbody><tr><td><b>Deepak</b></td><td>0.24</td><td>0.09</td><td>0.67</td></tr><tr><td><b>teaches</b></td><td>0.09</td><td>0.24</td><td>0.67</td></tr><tr><td><b>AI</b></td><td>0.11</td><td>0.11</td><td>0.78</td></tr></tbody></table></div><p>Each row is a softmax distribution, so each row approximately adds up to <b>1.00</b>. This does not mean the model has selected only one token. It means the current token distributes its attention across tokens with different strengths.</p><div class="callout"><b>Important:</b> The Attention Matrix is not the final output of the layer. It is the weight table. The model still multiplies this matrix with the Value vectors to create new context-aware output vectors.</div><pre><code>Attention Matrix = who looks at whom, and how strongly
+Output vectors    = weighted mixture of Value vectors</code></pre></section>
+<section class="card" id="s32"><div class="eyebrow">Section 32</div><h2>32. Reading the Attention Matrix</h2><p>To read an Attention Matrix, never read the whole grid randomly. Read it row by row. One row belongs to one current token.</p><p>Example row:</p><pre><code>teaches → [0.09, 0.24, 0.67]</code></pre><p>This means:</p><div class="table-wrap"><table><thead><tr><th>Current token</th><th>Looking at</th><th>Attention weight</th><th>Meaning</th></tr></thead><tbody><tr><td>teaches</td><td>Deepak</td><td>0.09</td><td>Weak focus</td></tr><tr><td>teaches</td><td>teaches</td><td>0.24</td><td>Medium self focus</td></tr><tr><td>teaches</td><td>AI</td><td>0.67</td><td>Strong focus</td></tr></tbody></table></div><p>In this simplified fake example, <b>teaches</b> is focusing most strongly on <b>AI</b>. In a real trained model, attention patterns are learned from data and may be spread across many heads and many layers.</p><p>The matrix helps us visualize token relationships, but we should not overclaim that it is the complete explanation of the model’s reasoning. It is one important signal inside a larger architecture.</p><pre><code>Rows    = current token asking for context
+Columns = tokens that may provide context
+Cells   = attention weights</code></pre></section>
+<section class="card" id="s33"><div class="eyebrow">Section 33</div><h2>33. Manual Q/K/V Attention calculation</h2><p>Now we calculate Attention manually for one token. This is the same teaching calculation we did in the lesson.</p><p>Sentence:</p><pre><code>Deepak teaches AI</code></pre><p>We use tiny 2-number vectors so the math stays easy:</p><div class="table-wrap"><table><thead><tr><th>Token</th><th>Vector</th></tr></thead><tbody><tr><td>Deepak</td><td>[2, 1]</td></tr><tr><td>teaches</td><td>[1, 2]</td></tr><tr><td>AI</td><td>[2, 2]</td></tr></tbody></table></div><p>We calculate Attention for the current token <b>teaches</b>. For learning simplicity, we use the same vectors as Query, Key, and Value. Real Transformers learn separate Q, K, and V projections.</p><pre><code>Q(teaches) = [1, 2]</code></pre><p>Now compare this Query with every Key using dot product:</p><pre><code>teaches → Deepak  = [1,2] · [2,1] = 1×2 + 2×1 = 4
+teaches → teaches = [1,2] · [1,2] = 1×1 + 2×2 = 5
+teaches → AI      = [1,2] · [2,2] = 1×2 + 2×2 = 6</code></pre><p>Raw scores are:</p><pre><code>[4, 5, 6]</code></pre><p>Apply softmax:</p><pre><code>softmax([4,5,6]) ≈ [0.09, 0.24, 0.67]</code></pre><p>Now mix the Value vectors:</p><pre><code>0.09 × [2,1] + 0.24 × [1,2] + 0.67 × [2,2]
+= [0.18,0.09] + [0.24,0.48] + [1.34,1.34]
+= [1.76, 1.91]</code></pre><div class="callout"><b>Final meaning:</b> Before Attention, teaches was [1,2]. After Attention, teaches becomes [1.76,1.91], which is a new context-aware vector influenced by Deepak, teaches, and AI.</div></section>
+<section class="card" id="s34"><div class="eyebrow">Section 34</div><h2>34. Full all-token Attention Matrix calculation</h2><p>The previous section calculated Attention for only one current token: <b>teaches</b>. But self-attention calculates this for every token. That produces a full raw score matrix first, then a full Attention Matrix after softmax.</p><p>Using the same vectors:</p><pre><code>Deepak  = [2,1]
+teaches = [1,2]
+AI      = [2,2]</code></pre><p>Raw dot product score matrix:</p><div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th><th>Deepak</th><th>teaches</th><th>AI</th></tr></thead><tbody><tr><td><b>Deepak</b></td><td>5</td><td>4</td><td>6</td></tr><tr><td><b>teaches</b></td><td>4</td><td>5</td><td>6</td></tr><tr><td><b>AI</b></td><td>6</td><td>6</td><td>8</td></tr></tbody></table></div><p>Softmax is applied <b>row-wise</b>, because each current token needs its own distribution of focus.</p><div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th><th>Deepak</th><th>teaches</th><th>AI</th></tr></thead><tbody><tr><td><b>Deepak</b></td><td>0.24</td><td>0.09</td><td>0.67</td></tr><tr><td><b>teaches</b></td><td>0.09</td><td>0.24</td><td>0.67</td></tr><tr><td><b>AI</b></td><td>0.11</td><td>0.11</td><td>0.78</td></tr></tbody></table></div><p>Then the matrix is multiplied by Value vectors:</p><pre><code>Attention output = Attention Matrix × V</code></pre><p>This gives new context-aware vectors for <b>Deepak</b>, <b>teaches</b>, and <b>AI</b>. This is the full self-attention step for a tiny sentence.</p></section>
+<section class="card" id="s35"><div class="eyebrow">Section 35</div><h2>35. Attention Matrix versus output vectors</h2><p>The Attention Matrix and the final output vectors are different. This is a very important distinction.</p><div class="table-wrap"><table><thead><tr><th>Item</th><th>What it represents</th><th>How to think about it</th></tr></thead><tbody><tr><td><b>Attention Matrix</b></td><td>Weights between tokens</td><td>Who looks at whom</td></tr><tr><td><b>Output vectors</b></td><td>New token representations</td><td>What each token becomes after collecting context</td></tr></tbody></table></div><p>The matrix is like a map of focus. The output vectors are the actual updated meanings used by the next layer. The model does not stop at the matrix; it continues processing the output vectors through residual connection, layer normalization, feed-forward network, and more Transformer blocks.</p></section>
+<section class="chapter-marker" id="masked-attention-core"><h2>Core Deep Study — Masked Attention</h2><p>This part explains Masked Attention fully: why GPT must not see future tokens, how the lower-triangular mask works, and why blocked scores become -∞ before softmax.</p></section>
+<section class="card" id="s36"><div class="eyebrow">Section 36</div><h2>36. MASKED ATTENTION — Complete study</h2><p>Normal self-attention allows every token to look at every other token. This is useful for many understanding tasks. But GPT-style text generation has a strict rule: the model must predict the next token using only previous context.</p><p>Suppose the training sentence is:</p><pre><code>I love learning AI</code></pre><p>When the model is learning to predict <b>learning</b>, it should only see <b>I love</b>. It should not already see <b>learning</b> as the answer, and it should not see the future token <b>AI</b>. That would be cheating.</p><div class="callout"><b>Masked Attention</b> means self-attention with future positions blocked. It is also called <b>causal attention</b> because the model can only use the causal past.</div><pre><code>Masked Attention = Self-Attention + no future cheating</code></pre></section>
+<section class="card" id="s37"><div class="eyebrow">Section 37</div><h2>37. Why future tokens are hidden</h2><p>GPT generates left to right. During generation, the future token does not exist yet. So training must match generation. If the model is allowed to see future tokens during training, it may learn an unrealistic shortcut.</p><p>Training examples from the sentence <b>I love learning AI</b> can be understood like this:</p><div class="table-wrap"><table><thead><tr><th>Context available to model</th><th>Target token</th></tr></thead><tbody><tr><td>I</td><td>love</td></tr><tr><td>I love</td><td>learning</td></tr><tr><td>I love learning</td><td>AI</td></tr></tbody></table></div><p>Masked Attention enforces this rule inside the Attention Matrix. Each row can attend only to the current token and earlier tokens, not later ones.</p></section>
+<section class="card" id="s38"><div class="eyebrow">Section 38</div><h2>38. Masked Attention table</h2><p>For the sentence <b>I love AI</b>, normal attention would allow every token to look at every token. Masked attention blocks future cells.</p><div class="table-wrap"><table><thead><tr><th>Current token</th><th>Can look at</th><th>Cannot look at</th></tr></thead><tbody><tr><td><b>I</b></td><td>I</td><td>love, AI</td></tr><tr><td><b>love</b></td><td>I, love</td><td>AI</td></tr><tr><td><b>AI</b></td><td>I, love, AI</td><td>—</td></tr></tbody></table></div><p>In matrix form, this becomes a lower-triangular pattern:</p><div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th><th>I</th><th>love</th><th>AI</th></tr></thead><tbody><tr><td><b>I</b></td><td class="allowed">allowed</td><td class="blocked">blocked</td><td class="blocked">blocked</td></tr><tr><td><b>love</b></td><td class="allowed">allowed</td><td class="allowed">allowed</td><td class="blocked">blocked</td></tr><tr><td><b>AI</b></td><td class="allowed">allowed</td><td class="allowed">allowed</td><td class="allowed">allowed</td></tr></tbody></table></div><p>The blocked upper-right area represents future tokens. Those positions must receive zero attention after softmax.</p></section>
+<section class="card" id="s39"><div class="eyebrow">Section 39</div><h2>39. Masked Attention math with -∞</h2><p>Masking usually happens before softmax. First the model calculates raw attention scores. Then scores for illegal future positions are replaced with a very large negative value, conceptually <b>-∞</b>.</p><p>Example raw scores:</p><div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th><th>I</th><th>love</th><th>AI</th></tr></thead><tbody><tr><td><b>I</b></td><td>5</td><td>7</td><td>4</td></tr><tr><td><b>love</b></td><td>2</td><td>6</td><td>8</td></tr><tr><td><b>AI</b></td><td>3</td><td>4</td><td>9</td></tr></tbody></table></div><p>After applying the causal mask:</p><div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th><th>I</th><th>love</th><th>AI</th></tr></thead><tbody><tr><td><b>I</b></td><td>5</td><td>-∞</td><td>-∞</td></tr><tr><td><b>love</b></td><td>2</td><td>6</td><td>-∞</td></tr><tr><td><b>AI</b></td><td>3</td><td>4</td><td>9</td></tr></tbody></table></div><p>Now softmax is applied row-wise. Because <b>softmax(-∞) = 0</b>, future tokens receive zero weight.</p><pre><code>Blocked future score = -∞
+softmax(-∞) = 0
+Therefore future attention weight = 0</code></pre><div class="callout"><b>Final meaning:</b> Masked Attention lets GPT train on full sequences while still preventing each position from seeing future answers.</div></section>
+<section class="card" id="s40"><div class="eyebrow">Section 40</div><h2>40. GPT-style causal attention</h2><p>GPT-style models are decoder-only Transformers. They use masked self-attention because they are trained for next-token prediction and generate text from left to right.</p><p>When GPT sees <b>The capital of India is</b>, each head can attend only to tokens already present: The, capital, of, India, is. It cannot look at the future token <b>Delhi</b> before predicting it.</p><pre><code>GPT = decoder-only Transformer
+Core attention style = masked multi-head self-attention</code></pre></section>
+<section class="card" id="s41"><div class="eyebrow">Section 41</div><h2>41. Encoder versus decoder attention</h2><p>Different Transformer families use different attention rules. Encoder-only models can usually look left and right because their job is understanding. Decoder-only models use masks because their job is generation. Encoder-decoder models use both ideas.</p><div class="table-wrap"><table><thead><tr><th>Model type</th><th>Attention style</th><th>Use case</th></tr></thead><tbody><tr><td>Encoder-only</td><td>Can look left and right</td><td>Understanding/classification</td></tr><tr><td>Decoder-only</td><td>Masked left-to-right attention</td><td>Text generation</td></tr><tr><td>Encoder-decoder</td><td>Encoder sees full input, decoder is masked</td><td>Translation and sequence-to-sequence</td></tr></tbody></table></div><p>For our LLM learning path, GPT-style masked decoder attention is especially important.</p></section>
+<section class="card" id="s42"><div class="eyebrow">Section 42</div><h2>42. Multi-head attention</h2><p>One attention head is one learned lens. But language has many relationships at the same time: subject-action, action-object, pronoun reference, location, time, grammar, and meaning.</p><p>Multi-head attention runs many attention calculations in parallel. Each head has its own learned Q, K, and V transformations, so different heads can focus on different relationship patterns.</p><pre><code>Head 1 = Attention(Q1,K1,V1)
+Head 2 = Attention(Q2,K2,V2)
+Head 3 = Attention(Q3,K3,V3)
+...
+MultiHead = concat(heads) × Wo</code></pre></section>
+<section class="card" id="s43"><div class="eyebrow">Section 43</div><h2>43. Why one attention head is not enough</h2><p>A single head may focus strongly on one type of relation, but a sentence may need many relations at once. Example: <b>The teacher gave the student a book because she wanted him to learn.</b></p><div class="table-wrap"><table><thead><tr><th>Relationship</th><th>Example</th></tr></thead><tbody><tr><td>Pronoun reference</td><td>she → teacher</td></tr><tr><td>Another pronoun reference</td><td>him → student</td></tr><tr><td>Action-object</td><td>gave → book</td></tr><tr><td>Learning target</td><td>learn → student</td></tr></tbody></table></div><p>Multiple heads allow the model to capture several useful patterns in parallel instead of forcing one head to handle everything.</p></section>
+<section class="card" id="s44"><div class="eyebrow">Section 44</div><h2>44. Different heads learn different relationships</h2><p>Important point: heads are learned, not manually assigned. A developer does not say Head 1 must learn pronouns and Head 2 must learn locations.</p><p>During training, if a head finds a pattern that reduces loss, that behavior becomes useful and is strengthened. Some heads may become specialized, some may be broad, and some may be partly redundant.</p><pre><code>Correct mental model:
+Different heads can learn different relationships.
+
+Incorrect mental model:
+Every head is manually programmed with a fixed job.</code></pre></section>
+<section class="card" id="s45"><div class="eyebrow">Section 45</div><h2>45. Attention versus RNN memory</h2><p>RNN memory moves information step by step. Attention allows direct connections. This is a major reason Attention became so powerful for language tasks.</p><div class="table-wrap"><table><thead><tr><th>RNN-style memory</th><th>Attention</th></tr></thead><tbody><tr><td>Information travels through hidden states</td><td>Token can directly focus on useful tokens</td></tr><tr><td>Long paths can weaken information</td><td>Short direct paths help long-distance dependency</td></tr><tr><td>Harder to parallelize</td><td>More parallelizable on GPUs</td></tr></tbody></table></div><p>This does not mean RNNs are useless. It means Attention solved several important limitations for large-scale language modeling.</p></section>
+<section class="card" id="s46"><div class="eyebrow">Section 46</div><h2>46. Attention versus embeddings</h2><p>Embeddings and Attention are different parts of the model. Embeddings convert tokens into starting vectors. Attention updates those vectors using context.</p><pre><code>Embedding = base meaning
+Attention = context-aware mixing</code></pre><p>So Attention does not replace embeddings. It uses embeddings as input and produces richer contextual vectors as output.</p></section>
+<section class="card" id="s47"><div class="eyebrow">Section 47</div><h2>47. Attention and Transformers</h2><p>The Transformer architecture is built around self-attention. The original Transformer used attention heavily for machine translation. Modern LLMs use stacks of Transformer blocks for next-token prediction.</p><p>Attention is the relationship engine inside the Transformer. It tells each token which other tokens are useful. But Attention is not alone; it works with position information, residual connections, normalization, feed-forward networks, and many stacked layers.</p></section>
+<section class="card" id="s48"><div class="eyebrow">Section 48</div><h2>48. Attention in next-token prediction</h2><p>In next-token prediction, the model reads the current context and predicts the next token. Attention helps the model gather the most useful context before making that prediction.</p><p>Example: <b>The capital of India is</b>. The model should attend strongly to <b>capital</b> and <b>India</b>, then predict a likely next token such as <b>Delhi</b>.</p><p>Another example: <b>Deepak is learning Attention after Sequence Learning, so the next topic is</b>. The model may attend to <b>Attention</b>, <b>Sequence Learning</b>, and <b>next topic</b>, then predict <b>Transformer</b>.</p></section>
+<section class="card" id="s49"><div class="eyebrow">Section 49</div><h2>49. Common misconceptions about attention</h2><p>Misconception 1: Attention means human-like consciousness. Not true. Attention is a mathematical mechanism for weighting and mixing vectors.</p><p>Misconception 2: Attention weights always explain the model’s full reasoning. Not always. They are useful signals, but the full model includes many layers and transformations.</p><p>Misconception 3: Attention replaces embeddings. No. Attention needs embeddings first.</p><p>Misconception 4: One attention head is enough. Language has many relationships, so multi-head attention gives more flexibility.</p></section>
+<section class="chapter-marker" id="transformer-block-core"><h2>Core Deep Study — Attention inside the Transformer Block</h2><p>This part places Attention inside the real Transformer block: embeddings, position, self-attention, residual connection, layer normalization, feed-forward network, and repeated layers.</p></section>
+<section class="card" id="s50"><div class="eyebrow">Section 50</div><h2>50. ATTENTION INSIDE THE TRANSFORMER BLOCK — Complete study</h2><p>Attention is powerful, but it is not the whole Transformer. In a real Transformer block, Attention works together with other components that preserve information, stabilize learning, and transform token representations more deeply.</p><p>A simplified Transformer block flow is:</p><pre><code>Input token vectors
+        ↓
+Self-Attention
+        ↓
+Add original input back  (Residual)
+        ↓
+Layer Normalization
+        ↓
+Feed-Forward Network
+        ↓
+Add original input back  (Residual)
+        ↓
+Layer Normalization
+        ↓
+Output token vectors</code></pre><p>Attention handles communication between tokens. Feed-forward handles deeper transformation inside each token. Residual connections help preserve information. Layer normalization keeps numerical values stable.</p><div class="callout"><b>Simple sentence:</b> Embedding gives base meaning, position gives order, Attention gives context, feed-forward refines meaning, and stacked blocks improve it layer by layer.</div></section>
+<section class="card" id="s51"><div class="eyebrow">Section 51</div><h2>51. Embedding + position before Attention</h2><p>Before Attention starts, text has already become tokens and token embeddings. The embedding gives each token a starting vector. But Attention by itself does not naturally know order.</p><p>Consider these sentences:</p><pre><code>Dog bites man
+Man bites dog</code></pre><p>The words are the same, but the meaning is different because the order is different. So Transformers add position information to token embeddings. The input to the Transformer is not just token meaning; it is token meaning plus position/order information.</p><pre><code>Input vector = token embedding + position information</code></pre></section>
+<section class="card" id="s52"><div class="eyebrow">Section 52</div><h2>52. Residual connection after Attention</h2><p>After self-attention produces its output, the Transformer does not simply throw away the original input. It adds the original input back. This is called a <b>residual connection</b> or <b>skip connection</b>.</p><pre><code>after_attention = original_input + attention_output</code></pre><p>This is useful because Attention adds contextual information, but the model should not lose the original token identity. For example, if the token is <b>it</b>, Attention may bring in context from <b>laptop</b>, but the model still needs to preserve that this position originally contained <b>it</b>.</p><p>Residual connections also help deep models train because information and gradients can flow through many layers more easily.</p></section>
+<section class="card" id="s53"><div class="eyebrow">Section 53</div><h2>53. Layer normalization</h2><p>After adding vectors together, their numeric scale can become unstable. Values may become too large, too small, or uneven across dimensions. Layer normalization helps keep each token vector in a stable range.</p><p>You can think of it as a stabilizer. It does not add new language knowledge by itself, but it makes training smoother and helps very deep Transformer stacks work reliably.</p><div class="table-wrap"><table><thead><tr><th>Component</th><th>Simple role</th></tr></thead><tbody><tr><td>Residual connection</td><td>Preserve original information</td></tr><tr><td>Layer normalization</td><td>Keep values stable</td></tr></tbody></table></div></section>
+<section class="card" id="s54"><div class="eyebrow">Section 54</div><h2>54. Feed-forward network after Attention</h2><p>Attention lets tokens communicate with each other. After this communication, each token goes through a feed-forward network. This feed-forward network is applied separately to each token position.</p><p>Attention answers: <b>Which tokens should share information?</b> Feed-forward answers: <b>How should the collected information be transformed?</b></p><p>Example: in <b>The bank approved the loan</b>, Attention may connect <b>bank</b> with <b>approved</b> and <b>loan</b>. Then the feed-forward network can refine the internal representation toward the financial meaning of bank.</p><pre><code>Attention      = communication across tokens
+Feed-forward   = transformation inside each token</code></pre></section>
+<section class="card" id="s55"><div class="eyebrow">Section 55</div><h2>55. Many Transformer blocks refine meaning</h2><p>One Transformer block gives one round of token communication and transformation. Large models stack many blocks so the representations can be refined again and again.</p><p>A useful mental picture:</p><div class="table-wrap"><table><thead><tr><th>Layer stage</th><th>Possible kind of refinement</th></tr></thead><tbody><tr><td>Early layers</td><td>Local grammar, nearby words, simple patterns</td></tr><tr><td>Middle layers</td><td>Phrase relationships, pronoun links, sentence structure</td></tr><tr><td>Later layers</td><td>Task-relevant meaning and next-token prediction features</td></tr></tbody></table></div><p>This is a simplified explanation, not a fixed rule for every model. But it helps show why Attention inside one block is only part of the story. Repeated blocks gradually build richer token representations.</p><pre><code>Token → embedding → attention context → feed-forward refinement → many layers → prediction-ready vector</code></pre></section>
+<section class="card" id="s56"><div class="eyebrow">Section 56</div><h2>56. Attention is learned</h2><p>The model is not manually told which token should attend to which token. It learns attention patterns through training. If attending to useful tokens reduces prediction error, those patterns become stronger.</p><p>For example, the model is not explicitly programmed that <b>it</b> should attend to <b>ball</b> in “it was rolling.” It learns from many examples where such patterns help prediction.</p></section>
+<section class="card" id="s57"><div class="eyebrow">Section 57</div><h2>57. Attention as memory access</h2><p>Another useful mental model is memory access. Tokens provide memory items. The current token creates a Query, compares it to Keys, and retrieves Values from useful tokens.</p><pre><code>Search → Match → Retrieve → Mix</code></pre><p>This is why Attention feels similar to lookup or retrieval, even though it is happening inside vector space.</p></section>
+<section class="card" id="s58"><div class="eyebrow">Section 58</div><h2>58. Full simple analogy</h2><p>Imagine a student asking, “What does <b>it</b> refer to?” That question is the Query. Around the classroom, cards say <b>dog</b>, <b>ball</b>, <b>road</b>, and <b>teacher</b>. These cards are Keys. The information behind each card is the Value.</p><p>The student compares the question with each card, gives the best matching card the highest focus, and takes information from that card. That is Attention in simple human terms.</p></section>
+<section class="card" id="s59"><div class="eyebrow">Section 59</div><h2>59. Complete example with it and road</h2><p>Sentence: <b>The road was blocked because it was flooded.</b> The current token <b>it</b> asks a Query like: what object/place is being described?</p><p>The word <b>road</b> has a Key that matches object/place. The words <b>blocked</b> and <b>flooded</b> provide condition clues. So <b>it</b> attends strongly to <b>road</b>.</p><pre><code>it → road
+Meaning: the road was flooded</code></pre></section>
+<section class="card" id="s60"><div class="eyebrow">Section 60</div><h2>60. Website demo idea 1 Word Focus Simulator</h2><p>The Word Focus Simulator should show that the same word can attend differently depending on context. For example, <b>The dog chased the ball because it was rolling</b> should highlight <b>ball</b> when the user clicks <b>it</b>.</p><p>If the sentence changes to <b>The dog chased the ball because it was tired</b>, clicking <b>it</b> should highlight <b>dog</b>. This gives users the first intuitive feeling of Attention.</p></section>
+<section class="card" id="s61"><div class="eyebrow">Section 61</div><h2>61. Website demo idea 2 Tiny Attention Calculator</h2><p>The Tiny Attention Calculator should show the real math in small numbers. It should use <b>Deepak teaches AI</b> with vectors [2,1], [1,2], and [2,2].</p><p>The calculator should show dot products, softmax weights, and the final weighted sum. This connects theory to actual Attention calculation.</p></section>
+<section class="card" id="s62"><div class="eyebrow">Section 62</div><h2>62. Website demo idea 3 Attention Matrix</h2><p>The Attention Matrix demo should show all tokens attending to all tokens. The user should click a row and see explanation like: “teaches attends 9% to Deepak, 24% to itself, and 67% to AI.”</p><p>This helps users understand that Attention is not only one word looking at one word; it is a full matrix of token-to-token focus.</p></section>
+<section class="card" id="s63"><div class="eyebrow">Section 63</div><h2>63. Website demo idea 4 Masked Attention Playground</h2><p>The Masked Attention Playground should compare normal attention and masked attention. In normal attention, every token can look everywhere. In masked attention, future cells are blocked.</p><p>This is especially important for explaining GPT-style next-token prediction and the “no future cheating” rule.</p></section>
+<section class="card" id="s64"><div class="eyebrow">Section 64</div><h2>64. Website demo idea 5 Multi-Head Lens Preview</h2><p>The Multi-Head Lens Preview should show different heads as different lenses. For the sentence <b>The teacher gave the student a book because she wanted him to learn</b>, one head may highlight <b>she → teacher</b>, another may highlight <b>him → student</b>, and another may highlight <b>gave → book</b>.</p><p>This should be presented carefully: heads are learned, not manually assigned. The demo is an educational preview, not a claim that every real model head works exactly this way.</p></section>
+<section class="card" id="s65"><div class="eyebrow">Section 65</div><h2>65. Mini exercise</h2><p>Sentence: <b>The glass fell from the table because it was unstable.</b> What does <b>it</b> refer to? Most likely: <b>table</b>, because the table was unstable.</p><p>Now sentence: <b>The glass fell from the table because it was slippery.</b> What does <b>it</b> refer to? Most likely: <b>glass</b>, because the glass was slippery.</p><p>This kind of relationship is exactly where Attention helps the model build better context-aware meaning.</p></section>
+<section class="card" id="s66"><div class="eyebrow">Section 66</div><h2>66. Quiz</h2><p>Use this quiz to check whether Attention is clear.</p><div class="table-wrap"><table><thead><tr><th>No.</th><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td>1</td><td>Why was Attention needed?</td><td>To let each token directly focus on relevant tokens.</td></tr><tr><td>2</td><td>What is an attention score?</td><td>A raw compatibility value between Query and Key.</td></tr><tr><td>3</td><td>What does softmax do?</td><td>Converts raw scores into weights that add up to 1.</td></tr><tr><td>4</td><td>What is weighted sum used for?</td><td>To mix Value vectors based on attention weights.</td></tr><tr><td>5</td><td>Query means?</td><td>What am I looking for?</td></tr><tr><td>6</td><td>Key means?</td><td>What information do I contain?</td></tr><tr><td>7</td><td>Value means?</td><td>What information will I contribute?</td></tr><tr><td>8</td><td>What is self-attention?</td><td>Tokens in the same sequence attending to each other.</td></tr><tr><td>9</td><td>Why masked attention?</td><td>To prevent future-token cheating.</td></tr><tr><td>10</td><td>Why multi-head attention?</td><td>To learn multiple relationship patterns in parallel.</td></tr></tbody></table></div></section>
+<section class="card" id="s67"><div class="eyebrow">Section 67</div><h2>67. Final checklist</h2><p>You understand Attention if you can explain these terms without fear: attention score, attention weight, softmax, weighted sum, Query, Key, Value, dot product, scaling by √d, self-attention, attention matrix, masked attention, multi-head attention, and Transformer block.</p><p>The final simple sentence is: <b>Attention helps each token build a better meaning by looking at the right surrounding tokens.</b></p></section>
+<section class="card" id="s68"><div class="eyebrow">Section 68</div><h2>68. Bridge to Transformer</h2><p>Attention is the relationship engine. Transformer is the architecture that wraps Attention with embeddings, position information, residual connections, normalization, feed-forward networks, and many stacked blocks.</p><p>Now that Attention is clear, the next topic becomes natural: <b>11 — Transformer</b>. In that topic, we will study how these pieces come together as a full architecture.</p></section>
+<section class="demo" id="interactive-demos"><h2>Interactive Demos</h2><p>These demos are placed after the full reading chapter so the page first teaches the concepts fully, and then lets the learner play with the ideas interactively.</p></section>
+
+<section class="demo" id="demo-word-focus">
+  <h2>Demo 1 — Word Focus Simulator</h2>
+  <p>Choose a sentence and click the focus word. Notice how the same word <b>it</b> points to a different token depending on context.</p>
+  <div class="controls">
+    <button onclick="setFocusSentence(0)">it = ball</button>
+    <button onclick="setFocusSentence(1)">it = dog</button>
+    <button onclick="setFocusSentence(2)">it = road</button>
+  </div>
+  <div id="focusSentence" class="token-line"></div>
+  <div id="focusExplain" class="explain"></div>
+</section>
+
+<section class="demo" id="demo-calculator">
+  <h2>Demo 2 — Tiny Attention Calculator</h2>
+  <p>This uses the teaching vectors Deepak=[2,1], teaches=[1,2], AI=[2,2]. Select a current token to calculate scores, softmax weights and output vector.</p>
+  <div class="controls">
+    <button onclick="calcAttention('Deepak')">Current: Deepak</button>
+    <button onclick="calcAttention('teaches')">Current: teaches</button>
+    <button onclick="calcAttention('AI')">Current: AI</button>
+  </div>
+  <div id="calcOutput"></div>
+</section>
+
+<section class="demo" id="demo-matrix">
+  <h2>Demo 3 — Attention Matrix Visualizer</h2>
+  <p>Click a row to read who that token is attending to.</p>
+  <div id="matrixTable"></div>
+  <div id="matrixExplain" class="explain">Click a row above.</div>
+</section>
+
+<section class="demo" id="demo-mask">
+  <h2>Demo 4 — Masked Attention Playground</h2>
+  <p>Toggle between normal attention and masked attention. Masked attention blocks future tokens for GPT-style generation.</p>
+  <div class="controls">
+    <button onclick="renderMask(false)">Normal Attention</button>
+    <button onclick="renderMask(true)">Masked Attention</button>
+  </div>
+  <div id="maskTable"></div>
+  <div id="maskExplain" class="explain"></div>
+</section>
+
+<section class="demo" id="demo-heads">
+  <h2>Demo 5 — Multi-Head Lens Preview</h2>
+  <p>This is an educational preview: different heads can learn different relationships. Click a head to see one possible relationship lens.</p>
+  <div class="controls">
+    <button onclick="setHead(0)">Head 1: she → teacher</button>
+    <button onclick="setHead(1)">Head 2: him → student</button>
+    <button onclick="setHead(2)">Head 3: gave → book</button>
+    <button onclick="setHead(3)">Head 4: learn → student</button>
+  </div>
+  <div id="headSentence" class="token-line"></div>
+  <div id="headExplain" class="explain"></div>
+</section>
+
+
+<div class="footer">End of 10 — Attention. Next topic: 11 — Transformer.</div>
+</div>
+<a href="#" class="to-top">↑ Top</a>
+<script>
+function toggleContents(){
+  const c=document.getElementById('contents');
+  c.classList.toggle('show');
+  document.body.classList.toggle('contents-open', c.classList.contains('show'));
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  const b=document.querySelector('.floating-toggle');
+  if(b){Object.assign(b.style,{position:'fixed',right:'28px',top:'18px',zIndex:'99999'});}
+});
+
+const focusCases = [
+  {words:['The','dog','chased','the','ball','because','it','was','rolling.'], cls:{'ball':'strong','rolling.':'med','dog':'weak'}, text:'Here “it” most likely refers to ball because rolling is a clue for the ball.'},
+  {words:['The','dog','chased','the','ball','because','it','was','tired.'], cls:{'dog':'strong','tired.':'med','ball':'weak'}, text:'Here “it” most likely refers to dog because tired is a clue for an animal.'},
+  {words:['The','road','was','blocked','because','it','was','flooded.'], cls:{'road':'strong','blocked':'med','flooded.':'med'}, text:'Here “it” most likely refers to road because the road was flooded.'}
+];
+function setFocusSentence(i){
+  const c=focusCases[i];
+  document.getElementById('focusSentence').innerHTML=c.words.map(w=>`<span class="token ${c.cls[w]||''}">${w}</span>`).join('');
+  document.getElementById('focusExplain').innerHTML=c.text;
+}
+
+const vecs={Deepak:[2,1],teaches:[1,2],AI:[2,2]};
+const toks=['Deepak','teaches','AI'];
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]}
+function softmax(xs){const es=xs.map(Math.exp); const s=es.reduce((a,b)=>a+b,0); return es.map(e=>e/s)}
+function calcAttention(tok){
+  const q=vecs[tok]; const scores=toks.map(t=>dot(q,vecs[t])); const weights=softmax(scores);
+  const out=[0,0]; weights.forEach((w,i)=>{out[0]+=w*vecs[toks[i]][0]; out[1]+=w*vecs[toks[i]][1];});
+  let rows=toks.map((t,i)=>`<tr><td>${t}</td><td>[${vecs[t].join(', ')}]</td><td>${scores[i]}</td><td>${weights[i].toFixed(2)}</td></tr>`).join('');
+  document.getElementById('calcOutput').innerHTML=`<div class="table-wrap"><table><thead><tr><th>Looking at</th><th>Key/Value vector</th><th>Dot score</th><th>Softmax weight</th></tr></thead><tbody>${rows}</tbody></table></div><pre><code>Q(${tok}) = [${q.join(', ')}]
+Output = weighted sum of Values = [${out[0].toFixed(2)}, ${out[1].toFixed(2)}]</code></pre>`;
+}
+
+const matrix = [ [0.24,0.09,0.67], [0.09,0.24,0.67], [0.11,0.11,0.78] ];
+function renderMatrix(){
+  let html='<div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th>'+toks.map(t=>`<th>${t}</th>`).join('')+'</tr></thead><tbody>';
+  matrix.forEach((r,i)=>{html+=`<tr class="matrix-row" onclick="explainMatrix(${i})"><td><b>${toks[i]}</b></td>`+r.map(v=>`<td>${v.toFixed(2)}</td>`).join('')+'</tr>';});
+  html+='</tbody></table></div>'; document.getElementById('matrixTable').innerHTML=html;
+}
+function explainMatrix(i){
+  const r=matrix[i]; let max=Math.max(...r); let j=r.indexOf(max);
+  document.getElementById('matrixExplain').innerHTML=`<b>${toks[i]}</b> attends most strongly to <b>${toks[j]}</b> with weight <b>${max.toFixed(2)}</b>. Full row: ${toks.map((t,k)=>t+'='+r[k].toFixed(2)).join(', ')}.`;
+}
+
+const maskToks=['I','love','learning','AI'];
+function renderMask(masked){
+  let html='<div class="table-wrap"><table><thead><tr><th>Current ↓ / Looking →</th>'+maskToks.map(t=>`<th>${t}</th>`).join('')+'</tr></thead><tbody>';
+  maskToks.forEach((r,i)=>{html+=`<tr><td><b>${r}</b></td>`; maskToks.forEach((c,j)=>{let block=masked && j>i; html+=`<td class="${block?'blocked':'allowed'}">${block?'blocked':'allowed'}</td>`;}); html+='</tr>';});
+  html+='</tbody></table></div>'; document.getElementById('maskTable').innerHTML=html;
+  document.getElementById('maskExplain').innerHTML= masked ? 'Masked attention blocks future tokens. This prevents future cheating in GPT-style next-token prediction.' : 'Normal attention allows every token to look at every token. This is useful for full-context understanding tasks.';
+}
+
+const headWords=['The','teacher','gave','the','student','a','book','because','she','wanted','him','to','learn.'];
+const heads=[
+  {strong:['she','teacher'], text:'Head 1 preview: connects she → teacher.'},
+  {strong:['him','student'], text:'Head 2 preview: connects him → student.'},
+  {strong:['gave','book'], text:'Head 3 preview: connects gave → book.'},
+  {strong:['learn.','student'], text:'Head 4 preview: connects learn → student.'}
+];
+function setHead(i){
+  const h=heads[i];
+  document.getElementById('headSentence').innerHTML=headWords.map(w=>`<span class="token ${h.strong.includes(w)?'strong':''}">${w}</span>`).join('');
+  document.getElementById('headExplain').innerHTML=h.text+' In real models, heads are learned, not manually assigned.';
+}
+setFocusSentence(0); calcAttention('teaches'); renderMatrix(); renderMask(true); setHead(0);
+</script>
+</body>
+</html>
